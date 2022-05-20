@@ -13,18 +13,17 @@ public class LocalSocketRunConfigStringGenerator extends StringGenerator{
     }
 
     @Override
-    public String getLogString() {
-        StringBuilder logString = new StringBuilder();
-
+    public void appendLogHeader(StringBuilder logString) {
         logString.append(mTitle).append(" Socket Server Run Config:");
+    }
 
-        for(Pair<String, Object> logVar: getLogVariableList()) {
-            String label = logVar.first;
-            Object object = logVar.second;
-            logString.append("\n").append(Logger.getSingleLineLogStringEntry(label, object, "-"));
-        }
+    @Override
+    public boolean isLogMultiLine(String label) {
+        return false;
+    }
 
-        return logString.toString();
+    @Override
+    public void appendLogFooter(StringBuilder logString) {
     }
 
     @Override

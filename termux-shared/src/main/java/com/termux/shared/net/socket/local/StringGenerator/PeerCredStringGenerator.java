@@ -8,26 +8,18 @@ import com.termux.shared.markdown.MarkdownUtils;
 import java.util.List;
 
 public class PeerCredStringGenerator extends StringGenerator{
+    @Override
+    public void appendLogHeader(StringBuilder logString) {
+        logString.append("Peer Cred:");
+    }
 
     @Override
-    public String getLogString() {
-        StringBuilder logString = new StringBuilder();
+    public boolean isLogMultiLine(String label) {
+        return label.equals("Cmdline");
+    }
 
-        logString.append("Peer Cred:");
-
-        for (Pair<String, Object> logVar: getLogVariableList()) {
-            String label = logVar.first;
-            Object object = logVar.second;
-            switch(label) {
-                case "Cmdline":
-                    if (label != null) logString.append("\n").append(Logger.getMultiLineLogStringEntry(label, object, "-"));
-                    break;
-                default:
-                    logString.append("\n").append(Logger.getSingleLineLogStringEntry(label, object, "-"));
-            }
-        }
-
-        return logString.toString();
+    @Override
+    public void appendLogFooter(StringBuilder logString) {
     }
 
     @Override

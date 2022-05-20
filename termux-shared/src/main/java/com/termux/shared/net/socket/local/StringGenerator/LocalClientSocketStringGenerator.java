@@ -14,22 +14,19 @@ public class LocalClientSocketStringGenerator extends StringGenerator{
     }
 
     @Override
-    public String getLogString() {
-        StringBuilder logString = new StringBuilder();
-
+    public void appendLogHeader(StringBuilder logString) {
         logString.append("Client Socket:");
+    }
 
-        for (Pair<String, Object> logVar: getLogVariableList()) {
-            String label = logVar.first;
-            Object object = logVar.second;
-            logString.append("\n").append(Logger.getSingleLineLogStringEntry(label, object, "-"));
-        }
+    @Override
+    public boolean isLogMultiLine(String label) {
+        return false;
+    }
 
+    @Override
+    public void appendLogFooter(StringBuilder logString) {
         logString.append("\n\n\n");
-
         logString.append(mPeerCred.getLogString());
-
-        return logString.toString();
     }
 
     @Override
