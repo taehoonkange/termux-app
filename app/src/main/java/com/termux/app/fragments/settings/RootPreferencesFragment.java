@@ -18,8 +18,7 @@ import com.termux.shared.interact.ShareUtils;
 import com.termux.shared.models.ReportInfo;
 import com.termux.shared.termux.TermuxConstants;
 import com.termux.shared.termux.TermuxUtils;
-import com.termux.shared.termux.settings.preferences.TermuxAPIAppSharedPreferences;
-import com.termux.shared.termux.settings.preferences.TermuxFloatAppSharedPreferences;
+
 import com.termux.shared.termux.settings.preferences.TermuxTaskerAppSharedPreferences;
 import com.termux.shared.termux.settings.preferences.TermuxWidgetAppSharedPreferences;
 
@@ -32,10 +31,10 @@ public class RootPreferencesFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
         new configureTermuxAPIPreference();
+        new configureTermuxFloatPreference();
         new Thread() {
             @Override
             public void run() {
-                configureTermuxFloatPreference(context);
                 configureTermuxTaskerPreference(context);
                 configureTermuxWidgetPreference(context);
                 configureAboutPreference(context);
@@ -53,14 +52,14 @@ public class RootPreferencesFragment extends PreferenceFragmentCompat {
 //        }
 //    }
 
-    private void configureTermuxFloatPreference(@NonNull Context context) {
-        Preference termuxFloatPreference = findPreference("termux_float");
-        if (termuxFloatPreference != null) {
-            TermuxFloatAppSharedPreferences preferences = TermuxFloatAppSharedPreferences.build(context, false);
-            // If failed to get app preferences, then likely app is not installed, so do not show its preference
-            termuxFloatPreference.setVisible(preferences != null);
-        }
-    }
+//    private void configureTermuxFloatPreference(@NonNull Context context) {
+//        Preference termuxFloatPreference = findPreference("termux_float");
+//        if (termuxFloatPreference != null) {
+//            TermuxFloatAppSharedPreferences preferences = TermuxFloatAppSharedPreferences.build(context, false);
+//            // If failed to get app preferences, then likely app is not installed, so do not show its preference
+//            termuxFloatPreference.setVisible(preferences != null);
+//        }
+//    }
 
     private void configureTermuxTaskerPreference(@NonNull Context context) {
         Preference termuxTaskerPreference = findPreference("termux_tasker");
