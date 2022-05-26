@@ -6,21 +6,22 @@ import android.os.Bundle;
 import androidx.preference.Preference;
 
 import com.termux.R;
-import com.termux.shared.termux.settings.preferences.TermuxAPIAppSharedPreferences;
+import com.termux.shared.termux.settings.preferences.TermuxFloatAppSharedPreferences;
 
-public class configureTermuxAPIPreference extends configureTermuxPreference{
-    private Preference termuxAPIPreference;
+public class configureTermuxFloatPreference extends configureTermuxPreference{
+    private Preference termuxFloatPreference;
 
     @Override
     Preference findPreferenceMethod() {
-        return termuxAPIPreference = findPreference("termux_api");
+        return termuxFloatPreference = findPreference("termux_float");
     }
 
     @Override
     void build(Context context, Preference termuxPreference) {
-        if (termuxAPIPreference != null) {
-            TermuxAPIAppSharedPreferences preferences = TermuxAPIAppSharedPreferences.build(context, false);
-            termuxAPIPreference.setVisible(preferences != null);
+        if (termuxFloatPreference != null) {
+            TermuxFloatAppSharedPreferences preferences = TermuxFloatAppSharedPreferences.build(context, false);
+            // If failed to get app preferences, then likely app is not installed, so do not show its preference
+            termuxFloatPreference.setVisible(preferences != null);
         }
     }
 
@@ -29,7 +30,7 @@ public class configureTermuxAPIPreference extends configureTermuxPreference{
         setPreferencesFromResource(R.xml.root_preferences, rootKey);
         Context context = getContext();
         generate(context);
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 // TODO Auto-generated method stub
