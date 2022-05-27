@@ -19,6 +19,7 @@ import com.termux.shared.termux.file.TermuxFileUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
 import com.termux.shared.shell.command.ExecutionCommand;
+import com.termux.shared.shell.command.ExecutionCommand.ExecutionCommandBuilder;
 import com.termux.shared.errors.Error;
 import com.termux.shared.android.PackageUtils;
 import com.termux.shared.termux.shell.TermuxShellEnvironmentClient;
@@ -529,10 +530,13 @@ public class TermuxUtils {
         }
 
         aptInfoScript = aptInfoScript.replaceAll(Pattern.quote("@TERMUX_PREFIX@"), TermuxConstants.TERMUX_PREFIX_DIR_PATH);
-
-        ExecutionCommand executionCommand = new ExecutionCommand(1,
-            TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH + "/bash", null, aptInfoScript,
-            null, ExecutionCommand.Runner.APP_SHELL.getName(), false);
+        ExecutionCommand executionCommand = new ExecutionCommandBuilder()
+                                                .setID(1)
+                                                .setExecutable(TermuxConstants.TERMUX_BIN_PREFIX_DIR_PATH + "/bash")
+                                                .setStdin(aptInfoScript)
+                                                .setRunner(ExecutionCommand.Runner.APP_SHELL.getName())
+                                                .setIsFailsafe(false)
+                                                .build();
         executionCommand.commandLabel = "APT Info Command";
         executionCommand.backgroundCustomLogLevel = Logger.LOG_LEVEL_OFF;
         AppShell appShell = AppShell.execute(context, executionCommand, null, new TermuxShellEnvironmentClient(), true);
@@ -590,8 +594,14 @@ public class TermuxUtils {
 
         // Run script
         // Logging must be disabled for output of logcat command itself in StreamGobbler
-        ExecutionCommand executionCommand = new ExecutionCommand(1, "/system/bin/sh",
-            null, logcatScript + "\n", "/", ExecutionCommand.Runner.APP_SHELL.getName(), true);
+        ExecutionCommand executionCommand = new ExecutionCommandBuilder()
+                                                .setID(1)
+                                                .setExecutable("/system/bin/sh")
+                                                .setStdin(logcatScript + "\n")
+                                                .setWorkingDirectory("/")
+                                                .setRunner(ExecutionCommand.Runner.APP_SHELL.getName())
+                                                .setIsFailsafe(true)
+                                                .build();
         executionCommand.commandLabel = "Logcat dump command";
         executionCommand.backgroundCustomLogLevel = Logger.LOG_LEVEL_OFF;
         AppShell appShell = AppShell.execute(context, executionCommand, null, new TermuxShellEnvironmentClient(), true);
