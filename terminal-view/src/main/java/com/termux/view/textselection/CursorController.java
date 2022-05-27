@@ -30,6 +30,7 @@ public interface CursorController extends ViewTreeObserver.OnTouchModeChangeList
     /**
      * Update the cursor positions.
      */
+    //void updatePosition(TextSelectionHandleView handle, int x, int y);
     void updatePosition(TextSelectionHandleView handle, int x, int y);
 
     /**
