@@ -249,6 +249,61 @@ public class ExecutionCommand {
         this.isFailsafe = isFailsafe;
     }
 
+    /** The {@link Class} that defines a builder for {@link ExecutionCommand} class. */
+    public static class ExecutionCommandBuilder {
+        private Integer id;
+        private String executable;
+        private String[] arguments;
+        private String stdin;
+        private String workingDirectory;
+        private String runner;
+        private boolean isFailsafe;
+
+        public ExecutionCommand.ExecutionCommandBuilder setID(Integer id) {
+            this.id = id;
+            return this;
+        }
+
+        public ExecutionCommand.ExecutionCommandBuilder setExecutable(String executable) {
+            this.executable = executable;
+            return this;
+        }
+
+        public ExecutionCommand.ExecutionCommandBuilder setArguments(String[] arguments) {
+            if (arguments != null)
+                this.arguments = arguments;
+            return this;
+        }
+
+        public ExecutionCommand.ExecutionCommandBuilder setStdin(String stdin) {
+            this.stdin = stdin;
+            return this;
+        }
+
+        public ExecutionCommand.ExecutionCommandBuilder setWorkingDirectory(String workingDirectory) {
+            this.workingDirectory = workingDirectory;
+            return this;
+        }
+
+        public ExecutionCommand.ExecutionCommandBuilder setRunner(String runner) {
+            this.runner = runner;
+            return this;
+        }
+
+        public ExecutionCommand.ExecutionCommandBuilder setIsFailsafe(boolean isFailsafe) {
+            this.isFailsafe = isFailsafe;
+            return this;
+        }
+
+        /**
+         * Returns {@link ExecutionCommand} object.
+         *
+         */
+        public ExecutionCommand build() {
+            return new ExecutionCommand(id, executable, arguments, stdin, workingDirectory, runner, isFailsafe);
+        }
+
+    }
 
     public boolean isPluginExecutionCommandWithPendingResult() {
         return isPluginExecutionCommand && resultConfig.isCommandWithPendingResult();
