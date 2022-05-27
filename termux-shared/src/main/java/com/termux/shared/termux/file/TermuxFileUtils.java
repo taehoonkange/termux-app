@@ -358,8 +358,14 @@ public class TermuxFileUtils {
     }
 
     private static ExecutionCommand runningScript(StringBuilder statScript, Context context) {
-        ExecutionCommand executionCommand = new ExecutionCommand(1, "/system/bin/sh", null,
-            statScript.toString() + "\n", "/", ExecutionCommand.Runner.APP_SHELL.getName(), true);
+        ExecutionCommand executionCommand = new ExecutionCommand.ExecutionCommandBuilder()
+                                                .setID(1)
+                                                .setExecutable("/system/bin/sh")
+                                                .setStdin(statScript.toString() + "\n")
+                                                .setWorkingDirectory("/")
+                                                .setRunner(ExecutionCommand.Runner.APP_SHELL.getName())
+                                                .setIsFailsafe(true)
+                                                .build();
         executionCommand.commandLabel = TermuxConstants.TERMUX_APP_NAME + " Files Stat Command";
         executionCommand.backgroundCustomLogLevel = Logger.LOG_LEVEL_OFF;
         AppShell appShell = AppShell.execute(context, executionCommand, null, new TermuxShellEnvironmentClient(), true);

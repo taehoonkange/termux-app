@@ -40,6 +40,7 @@ import com.termux.shared.notification.NotificationUtils;
 import com.termux.shared.android.PermissionUtils;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.shell.command.ExecutionCommand;
+import com.termux.shared.shell.command.ExecutionCommand.ExecutionCommandBuilder;
 import com.termux.shared.shell.command.ExecutionCommand.Runner;
 import com.termux.shared.shell.command.ExecutionCommand.SessionCreateMode;
 import com.termux.terminal.TerminalEmulator;
@@ -471,7 +472,15 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
     /** Create a TermuxTask. */
     @Nullable
     public AppShell createTermuxTask(String executablePath, String[] arguments, String stdin, String workingDirectory) {
-        return createTermuxTask(new ExecutionCommand(getNextExecutionId(), executablePath, arguments, stdin, workingDirectory, Runner.APP_SHELL.getName(), false));
+        return createTermuxTask(new ExecutionCommandBuilder()
+                                    .setID(getNextExecutionId())
+                                    .setExecutable(executablePath)
+                                    .setArguments(arguments)
+                                    .setStdin(stdin)
+                                    .setWorkingDirectory(workingDirectory)
+                                    .setRunner(Runner.APP_SHELL.getName())
+                                    .setIsFailsafe(false)
+                                    .build());
     }
 
     /** Create a TermuxTask. */
@@ -588,7 +597,15 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
      */
     @Nullable
     public TermuxSession createTermuxSession(String executablePath, String[] arguments, String stdin, String workingDirectory, boolean isFailSafe, String sessionName) {
-        ExecutionCommand executionCommand = new ExecutionCommand(getNextExecutionId(), executablePath, arguments, stdin, workingDirectory, Runner.TERMINAL_SESSION.getName(), isFailSafe);
+        ExecutionCommand executionCommand = new ExecutionCommandBuilder()
+                                                .setID(getNextExecutionId())
+                                                .setExecutable(executablePath)
+                                                .setArguments(arguments)
+                                                .setStdin(stdin)
+                                                .setWorkingDirectory(workingDirectory)
+                                                .setRunner(Runner.TERMINAL_SESSION.getName())
+                                                .setIsFailsafe(isFailSafe)
+                                                .build();
         executionCommand.sessionName = sessionName;
         return createTermuxSession(executionCommand);
     }
