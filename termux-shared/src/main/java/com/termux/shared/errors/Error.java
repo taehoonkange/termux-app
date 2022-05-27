@@ -27,62 +27,13 @@ public class Error implements Serializable {
 
     private static final String LOG_TAG = "Error";
 
-
-    public Error() {
-        InitError(null, null, null, null);
-    }
-
     public Error(String type, Integer code, String message, List<Throwable> throwableList) {
-        InitError(type, code, message, throwableList);
-    }
-
-    public Error(String type, Integer code, String message, Throwable throwable) {
-        InitError(type, code, message, Collections.singletonList(throwable));
-    }
-
-    public Error(String type, Integer code, String message) {
-        InitError(type, code, message, null);
-    }
-
-    public Error(Integer code, String message, List<Throwable> throwableList) {
-        InitError(null, code, message, throwableList);
-    }
-
-    public Error(Integer code, String message, Throwable throwable) {
-        InitError(null, code, message, Collections.singletonList(throwable));
-    }
-
-    public Error(Integer code, String message) {
-        InitError(null, code, message, null);
-    }
-
-    public Error(String message, Throwable throwable) {
-        InitError(null, null, message, Collections.singletonList(throwable));
-    }
-
-    public Error(String message, List<Throwable> throwableList) {
-        InitError(null, null, message, throwableList);
-    }
-
-    public Error(String message) {
-        InitError(null, null, message, null);
-    }
-
-    private void InitError(String type, Integer code, String message, List<Throwable> throwablesList) {
-        if (type != null && !type.isEmpty())
-            this.type = type;
-        else
-            this.type = Errno.TYPE;
-
-        if (code != null && code > Errno.ERRNO_SUCCESS.getCode())
-            this.code = code;
-        else
-            this.code = Errno.ERRNO_SUCCESS.getCode();
-
+        this.type = type;
+        this.code = code;
         this.message = message;
-
-        if (throwablesList != null)
-            this.throwableList = throwablesList;
+        if (throwableList != null) {
+            this.throwableList = throwableList;
+        }
     }
 
     /** The {@link Class} that defines a builder for {@link Error} class. */
@@ -92,6 +43,11 @@ public class Error implements Serializable {
         private String message = null;
         private List<Throwable> throwableList = new ArrayList<>();
 
+        /**
+         * Set type for {@link ErrorBuilder}.
+         *
+         * @param type The error type.
+         */
         public ErrorBuilder setType(String type) {
             if (type != null && !type.isEmpty())
                 this.type = type;
@@ -100,6 +56,11 @@ public class Error implements Serializable {
             return this;
         }
 
+        /**
+         * Set code for {@link ErrorBuilder}.
+         *
+         * @param code The error code.
+         */
         public ErrorBuilder setCode(Integer code) {
             if (code != null && code > Errno.ERRNO_SUCCESS.getCode())
                 this.code = code;
@@ -108,21 +69,40 @@ public class Error implements Serializable {
             return this;
         }
 
+        /**
+         * Set message for {@link ErrorBuilder}.
+         *
+         * @param message The error message.
+         */
         public ErrorBuilder setMessage(String message) {
             this.message = message;
             return this;
         }
 
+        /**
+         * Set throwableList for {@link ErrorBuilder}.
+         *
+         * @param throwable The error exception (just a single throwable).
+         */
         public ErrorBuilder setThrowableList(Throwable throwable) {
             return this.setThrowableList(Collections.singletonList(throwable));
         }
 
+        /**
+         * Set throwableList for {@link ErrorBuilder}.
+         *
+         * @param throwableList The error exceptions.
+         */
         public ErrorBuilder setThrowableList(List<Throwable> throwableList) {
             if (throwableList != null)
                 this.throwableList = throwableList;
             return this;
         }
 
+        /**
+         * Returns {@link Error} object.
+         *
+         */
         public Error build() {
             return new Error(type, code, message, throwableList);
         }

@@ -7,6 +7,7 @@ import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
 import com.termux.shared.errors.Errno;
 import com.termux.shared.errors.Error;
+import com.termux.shared.errors.Error.ErrorBuilder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -104,7 +105,7 @@ public class ResultData implements Serializable {
         if (errorsList == null)
             errorsList =  new ArrayList<>();
 
-        Error error = new Error();
+        Error error = new ErrorBuilder().build();
         errorsList.add(error);
 
         return error.setStateFailed(type, code, message, throwablesList);
