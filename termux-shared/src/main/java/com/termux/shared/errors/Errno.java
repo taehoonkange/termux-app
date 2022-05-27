@@ -81,16 +81,25 @@ public class Errno {
 
 
     public Error getError() {
-        return new Error(getType(), getCode(), getMessage());
+        return new ErrorBuilder().setType(getType())
+                                 .setCode(getCode())
+                                 .setMessage(getMessage())
+                                 .build();
     }
 
     public Error getError(Object... args) {
         try {
-            return new Error(getType(), getCode(), String.format(getMessage(), args));
+            return new ErrorBuilder().setType(getType())
+                                     .setCode(getCode())
+                                     .setMessage(String.format(getMessage(), args))
+                                     .build();
         } catch (Exception e) {
             Logger.logWarn(LOG_TAG, "Exception raised while calling String.format() for error message of errno " + this + " with args" + Arrays.toString(args) + "\n" + e.getMessage());
             // Return unformatted message as a backup
-            return new Error(getType(), getCode(), getMessage() + ": " + Arrays.toString(args));
+            return new ErrorBuilder().setType(getType())
+                                     .setCode(getCode())
+                                     .setMessage(getMessage() + ": " + Arrays.toString(args))
+                                     .build();
         }
     }
 
