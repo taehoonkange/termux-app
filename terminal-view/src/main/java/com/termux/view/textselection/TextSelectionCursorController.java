@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.termux.terminal.TerminalBuffer;
 import com.termux.view.R;
 import com.termux.view.TerminalView;
 
@@ -17,7 +16,8 @@ public class TextSelectionCursorController implements CursorController {
 
     private final TerminalView terminalView;
     private final TextSelectionCursorModel textSelectionCursorModel;
-    private final TextSelectionHandleView mStartHandle, mEndHandle;
+    private final TextSelectionHandleLeftView mStartHandle;
+    private final TextSelectionHandleRightView mEndHandle;
 
     private ActionMode mActionMode;
     private final int ACTION_COPY = 1;
@@ -27,8 +27,8 @@ public class TextSelectionCursorController implements CursorController {
     public TextSelectionCursorController(TerminalView terminalView) {
         this.terminalView = terminalView;
 
-        mStartHandle = new TextSelectionHandleView(terminalView, this, TextSelectionHandleView.LEFT);
-        mEndHandle = new TextSelectionHandleView(terminalView, this, TextSelectionHandleView.RIGHT);
+        mStartHandle = new TextSelectionHandleLeftView(terminalView, this);
+        mEndHandle = new TextSelectionHandleRightView(terminalView, this);
 
         int mHandleHeight = Math.max(mStartHandle.getHandleHeight(), mEndHandle.getHandleHeight());
 

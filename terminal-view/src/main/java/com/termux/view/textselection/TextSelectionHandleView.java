@@ -16,14 +16,12 @@ import com.termux.view.R;
 import com.termux.view.TerminalView;
 
 @SuppressLint("ViewConstructor")
-public class TextSelectionHandleView extends View {
+public abstract class TextSelectionHandleView extends View {
     private final TerminalView terminalView;
     private PopupWindow mHandle;
     private final CursorController mCursorController;
 
-    private final Drawable mHandleLeftDrawable;
-    private final Drawable mHandleRightDrawable;
-    private Drawable mHandleDrawable;
+    protected Drawable mHandleDrawable;
 
     private boolean mIsDragging;
 
@@ -34,33 +32,20 @@ public class TextSelectionHandleView extends View {
     private int mPointY;
     private float mTouchToWindowOffsetX;
     private float mTouchToWindowOffsetY;
-    private float mHotspotX;
-    private float mHotspotY;
-    private float mTouchOffsetY;
+    protected float mHotspotX;
+    protected float mHotspotY;
+    protected float mTouchOffsetY;
     private int mLastParentX;
     private int mLastParentY;
 
-    private int mHandleHeight;
-    private int mHandleWidth;
-
-    private final int mInitialOrientation;
-    private int mOrientation;
-
-    public static final int LEFT = 0;
-    public static final int RIGHT = 2;
-
+    protected int mHandleHeight;
+    protected int mHandleWidth;
     private long mLastTime;
 
-    public TextSelectionHandleView(TerminalView terminalView, CursorController cursorController, int initialOrientation) {
+    public TextSelectionHandleView(TerminalView terminalView, CursorController cursorController) {
         super(terminalView.getContext());
         this.terminalView = terminalView;
         mCursorController = cursorController;
-        mInitialOrientation = initialOrientation;
-
-        mHandleLeftDrawable = getContext().getDrawable(R.drawable.text_select_handle_left_material);
-        mHandleRightDrawable = getContext().getDrawable(R.drawable.text_select_handle_right_material);
-
-        setOrientation(mInitialOrientation);
     }
 
     private void initHandle() {
@@ -78,31 +63,12 @@ public class TextSelectionHandleView extends View {
         mHandle.setContentView(this);
     }
 
-    public void setOrientation(int orientation) {
-        mOrientation = orientation;
-        int handleWidth = 0;
-        switch (orientation) {
-            case LEFT: {
-                mHandleDrawable = mHandleLeftDrawable;
-                handleWidth = mHandleDrawable.getIntrinsicWidth();
-                mHotspotX = (handleWidth * 3) / (float) 4;
-                break;
-            }
+    public abstract void setOrientation();
 
-            case RIGHT: {
-                mHandleDrawable = mHandleRightDrawable;
-                handleWidth = mHandleDrawable.getIntrinsicWidth();
-                mHotspotX = handleWidth / (float) 4;
-                break;
-            }
-        }
-
+    public void setCommonOrientation(int handleWidth) {
         mHandleHeight = mHandleDrawable.getIntrinsicHeight();
-
         mHandleWidth = handleWidth;
         mTouchOffsetY = -mHandleHeight * 0.3f;
-        mHotspotY = 0;
-        invalidate();
     }
 
     public void show() {
@@ -189,11 +155,7 @@ public class TextSelectionHandleView extends View {
         }
     }
 
-    public void changeOrientation(int orientation) {
-        if (mOrientation != orientation) {
-            setOrientation(orientation);
-        }
-    }
+    public abstract void changeOrientation(int posX, final Rect clip);
 
     private void checkChangedOrientation(int posX, boolean force) {
         if (!mIsDragging && !force) {
@@ -225,13 +187,7 @@ public class TextSelectionHandleView extends View {
             return;
         }
 
-        if (posX - mHandleWidth < clip.left) {
-            changeOrientation(RIGHT);
-        } else if (posX + mHandleWidth > clip.right) {
-            changeOrientation(LEFT);
-        } else {
-            changeOrientation(mInitialOrientation);
-        }
+        changeOrientation(posX, clip);
     }
 
     private boolean isPositionVisible() {
