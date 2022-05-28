@@ -101,9 +101,8 @@ public class LocalSocketRunConfig implements Serializable {
     private Integer mBacklog;
     public static final int DEFAULT_BACKLOG = 50;
 
-    /** {@link StringGenerator} for {@link LocalSocketRunConfig}. */
-    private StringGenerator stringGenerator;
-
+    /** {@link LocalSocketRunConfigStringGenerator} for {@link LocalSocketRunConfig}. */
+    private LocalSocketRunConfigStringGenerator stringGenerator;
 
     /**
      * Create an new instance of {@link LocalSocketRunConfig}.

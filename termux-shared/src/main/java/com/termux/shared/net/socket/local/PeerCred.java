@@ -40,13 +40,13 @@ public class PeerCred {
     /** Command line that started the process. */
     public String cmdline;
 
-
-    /** {@link StringGenerator} for {@link PeerCred}. */
-    private StringGenerator stringGenerator = new PeerCredStringGenerator();
+    /** {@link PeerCredStringGenerator} for {@link PeerCred}. */
+    private PeerCredStringGenerator stringGenerator;
 
     PeerCred() {
         // Initialize to -1 instead of 0 in case a failed getPeerCred()/getsockopt() call somehow doesn't report failure and returns the uid of root
         pid = -1; uid = -1; gid = -1;
+        stringGenerator = new PeerCredStringGenerator();
     }
 
     /** Set data that was not set by JNI. */
