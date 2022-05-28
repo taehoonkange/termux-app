@@ -9,6 +9,9 @@ import com.termux.shared.errors.Error;
 import com.termux.shared.jni.models.JniResult;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
+import com.termux.shared.net.socket.local.StringGenerator.LocalClientSocketStringGenerator;
+import com.termux.shared.net.socket.local.StringGenerator.PeerCredStringGenerator;
+import com.termux.shared.net.socket.local.StringGenerator.StringGenerator;
 
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -49,6 +52,9 @@ public class LocalClientSocket implements Closeable {
     /** The {@link InputStream} implementation for the {@link LocalClientSocket}. */
     @NonNull protected final SocketInputStream mInputStream;
 
+    /** {@link LocalClientSocketStringGenerator} for {@link LocalClientSocket}. */
+    private LocalClientSocketStringGenerator stringGenerator;
+
     /**
      * Create an new instance of {@link LocalClientSocket}.
      *
@@ -66,6 +72,8 @@ public class LocalClientSocket implements Closeable {
 
         setFD(fd);
         mPeerCred.fillPeerCred(localSocketManager.getContext());
+
+        stringGenerator = new LocalClientSocketStringGenerator(mPeerCred);
     }
 
 
@@ -364,61 +372,28 @@ public class LocalClientSocket implements Closeable {
     }
 
     /**
-     * Get log variables {@link List < Pair <String, Object>>} for {@link LocalClientSocket}.
-     *
-     * @return Returns the log variables in list {@link List<Pair<String, Object>>}.
+     * Set log variables {@link List < Pair <String, Object>>} for {@link LocalClientSocketStringGenerator}.
      */
-    private List<Pair<String, Object>> getLogVariableList() {
-        List<Pair<String, Object>> logVariableList = new ArrayList<Pair<String, Object>>() {{
+    private void setLogVariableList() {
+        stringGenerator.setLogVariableList(new ArrayList<Pair<String, Object>>() {{
             add(Pair.create("FD", mFD));
             add(Pair.create("Creation Time", mCreationTime));
-        }};
-        return logVariableList;
+        }});
     }
 
     /** Get a log {@link String} for the {@link LocalClientSocket}. */
     @NonNull
     public String getLogString() {
-        StringBuilder logString = new StringBuilder();
-
-        logString.append("Client Socket:");
-
-        for (Pair<String, Object> logVar: getLogVariableList()) {
-            String label = logVar.first;
-            Object object = logVar.second;
-            logString.append("\n").append(Logger.getSingleLineLogStringEntry(label, object, "-"));
-        }
-
-        logString.append("\n\n\n");
-
-        logString.append(mPeerCred.getLogString());
-
-        return logString.toString();
+        setLogVariableList();
+        return stringGenerator.getLogString();
     }
 
     /** Get a markdown {@link String} for the {@link LocalClientSocket}. */
     @NonNull
     public String getMarkdownString() {
-        StringBuilder markdownString = new StringBuilder();
-
-        markdownString.append("## ").append("Client Socket");
-
-        for (Pair<String, Object> logVar: getLogVariableList()) {
-            String label = logVar.first;
-            Object object = logVar.second;
-            markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry(label, object, "-"));
-        }
-
-        markdownString.append("\n\n\n");
-
-        markdownString.append(mPeerCred.getMarkdownString());
-
-        return markdownString.toString();
+        setLogVariableList();
+        return stringGenerator.getMarkdownString();
     }
-
-
-
-
 
     /** Wrapper class to allow pass by reference of int values. */
     public static final class MutableInt {
