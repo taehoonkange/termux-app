@@ -17,6 +17,7 @@ import com.termux.shared.shell.command.ExecutionCommand.ExecutionState;
 import com.termux.shared.shell.ShellEnvironmentClient;
 import com.termux.shared.shell.ShellUtils;
 import com.termux.shared.shell.StreamGobbler;
+import com.termux.shared.shell.StreamGobbler.StreamGobblerBuilder;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -145,9 +146,18 @@ public final class AppShell {
 
         // setup stdin, and stdout and stderr gobblers
         DataOutputStream STDIN = new DataOutputStream(mProcess.getOutputStream());
-        StreamGobbler STDOUT = new StreamGobbler(mExecutionCommand.mPid + "-stdout", mProcess.getInputStream(), mExecutionCommand.resultData.stdout, mExecutionCommand.backgroundCustomLogLevel);
-        StreamGobbler STDERR = new StreamGobbler(mExecutionCommand.mPid + "-stderr", mProcess.getErrorStream(), mExecutionCommand.resultData.stderr, mExecutionCommand.backgroundCustomLogLevel);
-
+//        StreamGobbler STDOUT = new StreamGobbler(mExecutionCommand.mPid + "-stdout", mProcess.getInputStream(), mExecutionCommand.resultData.stdout, mExecutionCommand.backgroundCustomLogLevel);
+        StreamGobbler STDOUT = new StreamGobblerBuilder().setShell(mExecutionCommand.mPid + "-stdout")
+                                                         .setInputStream(mProcess.getInputStream())
+                                                         .setStringWriter(mExecutionCommand.resultData.stdout)
+                                                         .setLogLevel(mExecutionCommand.backgroundCustomLogLevel)
+                                                         .build();
+//        StreamGobbler STDERR = new StreamGobbler(mExecutionCommand.mPid + "-stderr", mProcess.getErrorStream(), mExecutionCommand.resultData.stderr, mExecutionCommand.backgroundCustomLogLevel);
+        StreamGobbler STDERR = new StreamGobblerBuilder().setShell(mExecutionCommand.mPid + "-stderr")
+                                                         .setInputStream(mProcess.getErrorStream())
+                                                         .setStringWriter(mExecutionCommand.resultData.stderr)
+                                                         .setLogLevel(mExecutionCommand.backgroundCustomLogLevel)
+                                                         .build();
         // start gobbling
         STDOUT.start();
         STDERR.start();
