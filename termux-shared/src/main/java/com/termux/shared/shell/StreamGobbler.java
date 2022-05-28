@@ -100,92 +100,94 @@ public class StreamGobbler extends Thread {
      * <p>We use this class because shell STDOUT and STDERR should be read as quickly as
      * possible to prevent a deadlock from occurring, or Process.waitFor() never
      * returning (as the buffer is full, pausing the native process)</p>
-     *
-     * @param shell Name of the shell
-     * @param inputStream InputStream to read from
-     * @param outputList {@literal List<String>} to write to, or null
-     * @param logLevel The custom log level to use for logging the command output. If set to
-     *                 {@code null}, then {@link Logger#LOG_LEVEL_VERBOSE} will be used.
-     */
-    @AnyThread
-    public StreamGobbler(@NonNull String shell, @NonNull InputStream inputStream,
-                         @Nullable List<String> outputList,
-                         @Nullable Integer logLevel) {
-        super("Gobbler#" + incThreadCounter());
-        this.shell = shell;
-        this.inputStream = inputStream;
-        reader = new BufferedReader(new InputStreamReader(inputStream));
-        streamClosedListener = null;
-
-        listWriter = outputList;
-        stringWriter = null;
-        lineListener = null;
-
-        mLogLevel = logLevel;
-    }
-
-    /**
-     * <p>StreamGobbler constructor</p>
-     *
-     * <p>We use this class because shell STDOUT and STDERR should be read as quickly as
-     * possible to prevent a deadlock from occurring, or Process.waitFor() never
-     * returning (as the buffer is full, pausing the native process)</p>
      * Do not use this for concurrent reading for STDOUT and STDERR for the same StringBuilder since
      * its not synchronized.
      *
      * @param shell Name of the shell
      * @param inputStream InputStream to read from
-     * @param outputString {@literal List<String>} to write to, or null
-     * @param logLevel The custom log level to use for logging the command output. If set to
-     *                 {@code null}, then {@link Logger#LOG_LEVEL_VERBOSE} will be used.
-     */
-    @AnyThread
-    public StreamGobbler(@NonNull String shell, @NonNull InputStream inputStream,
-                         @Nullable StringBuilder outputString,
-                         @Nullable Integer logLevel) {
-        super("Gobbler#" + incThreadCounter());
-        this.shell = shell;
-        this.inputStream = inputStream;
-        reader = new BufferedReader(new InputStreamReader(inputStream));
-        streamClosedListener = null;
-
-        listWriter = null;
-        stringWriter = outputString;
-        lineListener = null;
-
-        mLogLevel = logLevel;
-    }
-
-    /**
-     * <p>StreamGobbler constructor</p>
-     *
-     * <p>We use this class because shell STDOUT and STDERR should be read as quickly as
-     * possible to prevent a deadlock from occurring, or Process.waitFor() never
-     * returning (as the buffer is full, pausing the native process)</p>
-     *
-     * @param shell Name of the shell
-     * @param inputStream InputStream to read from
+     * @param reader BufferedReader initialized by {@param inputStream}
+     * @param listWriter {@literal List<String>} to write to, or null
+     * @param stringWriter {@literal List<String>} to write to, or null
      * @param onLineListener OnLineListener callback
      * @param onStreamClosedListener OnStreamClosedListener callback
      * @param logLevel The custom log level to use for logging the command output. If set to
      *                 {@code null}, then {@link Logger#LOG_LEVEL_VERBOSE} will be used.
      */
     @AnyThread
-    public StreamGobbler(@NonNull String shell, @NonNull InputStream inputStream,
+    public StreamGobbler(@NonNull String shell,
+                         @NonNull InputStream inputStream,
+                         @NonNull BufferedReader reader,
+                         @Nullable List<String> listWriter,
+                         @Nullable StringBuilder stringWriter,
                          @Nullable OnLineListener onLineListener,
                          @Nullable OnStreamClosedListener onStreamClosedListener,
                          @Nullable Integer logLevel) {
         super("Gobbler#" + incThreadCounter());
         this.shell = shell;
         this.inputStream = inputStream;
-        reader = new BufferedReader(new InputStreamReader(inputStream));
+        this.reader = reader;
         streamClosedListener = onStreamClosedListener;
-
-        listWriter = null;
-        stringWriter = null;
+        this.listWriter = listWriter;
+        this.stringWriter = stringWriter;
         lineListener = onLineListener;
-
         mLogLevel = logLevel;
+    }
+
+    public static class StreamGobblerBuilder {
+        private String shell = null;
+        private InputStream inputStream = null;
+        private BufferedReader reader = null;
+        private List<String> listWriter = null;
+        private StringBuilder stringWriter = null;
+        private OnLineListener lineListener = null;
+        private OnStreamClosedListener streamClosedListener = null;
+        private Integer logLevel = null;
+
+        public StreamGobblerBuilder setShell(String shell) {
+            this.shell = shell;
+            return this;
+        }
+
+        public StreamGobblerBuilder setInputStream(InputStream inputStream) {
+            this.inputStream = inputStream;
+            this.setReader(inputStream);
+            return this;
+        }
+
+        public StreamGobblerBuilder setReader(InputStream inputStream) {
+            this.reader = new BufferedReader(new InputStreamReader(inputStream));
+            return this;
+        }
+
+        public StreamGobblerBuilder setListWriter(List<String> outputList) {
+            this.listWriter = outputList;
+            return this;
+        }
+
+        public StreamGobblerBuilder setStringWriter(StringBuilder outputString) {
+            this.stringWriter = outputString;
+            return this;
+        }
+
+        public StreamGobblerBuilder setLineListener(OnLineListener onLineListener) {
+            this.lineListener = onLineListener;
+            return this;
+        }
+
+        public StreamGobblerBuilder setStreamClosedListener(OnStreamClosedListener onStreamClosedListener) {
+            this.streamClosedListener = onStreamClosedListener;
+            return this;
+        }
+
+        public StreamGobblerBuilder setLogLevel(Integer logLevel) {
+            this.logLevel = logLevel;
+            return this;
+        }
+
+        @AnyThread
+        public StreamGobbler build() {
+            return new StreamGobbler(shell, inputStream, reader, listWriter, stringWriter, lineListener, streamClosedListener, logLevel);
+        }
     }
 
     @Override
