@@ -104,7 +104,6 @@ public class LocalSocketRunConfig implements Serializable {
     /** {@link LocalSocketRunConfigStringGenerator} for {@link LocalSocketRunConfig}. */
     private LocalSocketRunConfigStringGenerator stringGenerator;
 
-
     /**
      * Create an new instance of {@link LocalSocketRunConfig}.
      *

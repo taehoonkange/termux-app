@@ -40,7 +40,6 @@ public class PeerCred {
     /** Command line that started the process. */
     public String cmdline;
 
-
     /** {@link PeerCredStringGenerator} for {@link PeerCred}. */
     private PeerCredStringGenerator stringGenerator;
 
