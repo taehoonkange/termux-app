@@ -1,9 +1,5 @@
 package com.termux.shared.net.socket.local.StringGenerator;
 
-import android.util.Pair;
-
-import com.termux.shared.logger.Logger;
-import com.termux.shared.markdown.MarkdownUtils;
 import com.termux.shared.net.socket.local.PeerCred;
 
 public class LocalClientSocketStringGenerator extends StringGenerator{

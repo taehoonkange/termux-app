@@ -1,12 +1,5 @@
 package com.termux.shared.net.socket.local.StringGenerator;
 
-import android.util.Pair;
-
-import com.termux.shared.logger.Logger;
-import com.termux.shared.markdown.MarkdownUtils;
-
-import java.util.List;
-
 public class PeerCredStringGenerator extends StringGenerator{
     @Override
     public void appendLogHeader(StringBuilder logString) {

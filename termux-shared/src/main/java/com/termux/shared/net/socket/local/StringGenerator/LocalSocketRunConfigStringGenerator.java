@@ -1,10 +1,5 @@
 package com.termux.shared.net.socket.local.StringGenerator;
 
-import android.util.Pair;
-
-import com.termux.shared.logger.Logger;
-import com.termux.shared.markdown.MarkdownUtils;
-
 public class LocalSocketRunConfigStringGenerator extends StringGenerator{
     private String mTitle;
 
