@@ -30,21 +30,20 @@ public class LocalClientSocketStringGenerator extends StringGenerator{
     }
 
     @Override
-    public String getMarkdownString() {
-        StringBuilder markdownString = new StringBuilder();
-
+    public void appendMarkdownHeader(StringBuilder markdownString) {
         markdownString.append("## ").append("Client Socket");
+    }
 
-        for (Pair<String, Object> logVar: getLogVariableList()) {
-            String label = logVar.first;
-            Object object = logVar.second;
-            markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry(label, object, "-"));
-        }
+    @Override
+    public boolean isMarkdownMultiLine(String label) {
+        return label.equals("Cmdline");
+    }
 
+    @Override
+    public void appendMarkdownFooter(StringBuilder markdownString) {
         markdownString.append("\n\n\n");
-
         markdownString.append(mPeerCred.getMarkdownString());
 
-        return markdownString.toString();
     }
+
 }

@@ -27,17 +27,17 @@ public class LocalSocketRunConfigStringGenerator extends StringGenerator{
     }
 
     @Override
-    public String getMarkdownString() {
-        StringBuilder markdownString = new StringBuilder();
-
+    public void appendMarkdownHeader(StringBuilder markdownString) {
         markdownString.append("## ").append(mTitle).append(" Socket Server Run Config");
-
-        for(Pair<String, Object> logVar: getLogVariableList()) {
-            String label = logVar.first;
-            Object object = logVar.second;
-            markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry(label, object, "-"));
-        }
-
-        return markdownString.toString();
     }
+
+    @Override
+    public boolean isMarkdownMultiLine(String label) {
+        return label.equals("Cmdline");
+    }
+
+    @Override
+    public void appendMarkdownFooter(StringBuilder markdownString) {
+    }
+
 }
