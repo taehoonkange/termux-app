@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.termux.shared.R;
 import com.termux.shared.activities.ReportActivity;
+import com.termux.shared.android.TimeStampUtils.MilliSecondLocalTimeStamp;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.termux.file.TermuxFileUtils;
 import com.termux.shared.shell.command.result.ResultConfig;
@@ -204,7 +205,7 @@ public class TermuxPluginUtils {
 
         // Set default resultFileBasename if resultSingleFile is true to `<executable_basename>-<timestamp>.log`
         if (resultConfig.resultSingleFile && resultConfig.resultFileBasename == null)
-            resultConfig.resultFileBasename = ShellUtils.getExecutableBasename(executionCommand.executable) + "-" + AndroidUtils.getCurrentMilliSecondLocalTimeStamp() + ".log";
+            resultConfig.resultFileBasename = ShellUtils.getExecutableBasename(executionCommand.executable) + "-" +  new MilliSecondLocalTimeStamp().getCurrentTimeStamp(); //MilliSecondLocalTimeStamp.getCurrentMilliSecondLocalTimeStamp() + ".log";
     }
 
     /**

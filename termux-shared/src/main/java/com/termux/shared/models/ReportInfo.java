@@ -2,9 +2,8 @@ package com.termux.shared.models;
 
 import android.util.Pair;
 
+import com.termux.shared.android.TimeStampUtils.MilliSecondUTCTimeStamp;
 import com.termux.shared.markdown.MarkdownUtils;
-import com.termux.shared.android.AndroidUtils;
-import com.termux.shared.net.socket.local.LocalClientSocket;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class ReportInfo implements Serializable {
         this.userAction = userAction;
         this.sender = sender;
         this.reportTitle = reportTitle;
-        this.reportTimestamp = AndroidUtils.getCurrentMilliSecondUTCTimeStamp();
+        this.reportTimestamp = new MilliSecondUTCTimeStamp().getCurrentTimeStamp();
     }
 
     public void setReportStringPrefix(String reportStringPrefix) {
