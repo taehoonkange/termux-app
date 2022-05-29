@@ -1,6 +1,5 @@
 package com.termux.shared.android;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -16,10 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Properties;
-import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -232,27 +228,5 @@ public class AndroidUtils {
         return MarkdownUtils.getSingleLineMarkdownStringEntry(label, value, "-");
     }
 
-
-
-    public static String getCurrentTimeStamp() {
-        @SuppressLint("SimpleDateFormat")
-        final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return df.format(new Date());
-    }
-
-    public static String getCurrentMilliSecondUTCTimeStamp() {
-        @SuppressLint("SimpleDateFormat")
-        final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z");
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return df.format(new Date());
-    }
-
-    public static String getCurrentMilliSecondLocalTimeStamp() {
-        @SuppressLint("SimpleDateFormat")
-        final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss.SSS");
-        df.setTimeZone(TimeZone.getDefault());
-        return df.format(new Date());
-    }
 
 }

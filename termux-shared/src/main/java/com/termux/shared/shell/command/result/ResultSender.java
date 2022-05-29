@@ -7,13 +7,13 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.termux.shared.R;
+import com.termux.shared.android.TimeStampUtils.MilliSecondLocalTimeStamp;
 import com.termux.shared.data.DataUtils;
 import com.termux.shared.markdown.MarkdownUtils;
 import com.termux.shared.errors.Error;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.errors.FunctionErrno;
-import com.termux.shared.android.AndroidUtils;
 import com.termux.shared.shell.command.ShellCommandConstants.RESULT_SENDER;
 
 public class ResultSender {
@@ -249,7 +249,7 @@ public class ResultSender {
 
             // Write error or output to temp file
             // Check errCode file creation below for explanation for why temp file is used
-            String temp_filename = resultConfig.resultFileBasename + "-" + AndroidUtils.getCurrentMilliSecondLocalTimeStamp();
+            String temp_filename = resultConfig.resultFileBasename + "-" + new MilliSecondLocalTimeStamp().getCurrentTimeStamp(); //MilliSecondLocalTimeStamp.getCurrentMilliSecondLocalTimeStamp();
             error = FileUtils.writeTextToFile(temp_filename, resultConfig.resultDirectoryPath + "/" + temp_filename,
                 null, error_or_output, false);
             if (error != null) {
@@ -326,7 +326,7 @@ public class ResultSender {
             // caller may otherwise read from an empty file in some cases.
 
             // Write errCode to temp file
-            String temp_filename = RESULT_SENDER.RESULT_FILE_ERR_PREFIX + "-" + AndroidUtils.getCurrentMilliSecondLocalTimeStamp();
+            String temp_filename = RESULT_SENDER.RESULT_FILE_ERR_PREFIX + "-" + new MilliSecondLocalTimeStamp().getCurrentTimeStamp();//MilliSecondLocalTimeStamp.getCurrentMilliSecondLocalTimeStamp();
             if (!resultConfig.resultFilesSuffix.isEmpty()) temp_filename = temp_filename + "-" + resultConfig.resultFilesSuffix;
             error = FileUtils.writeTextToFile(temp_filename, resultConfig.resultDirectoryPath + "/" + temp_filename,
                 null, String.valueOf(resultData.getErrCode()), false);
