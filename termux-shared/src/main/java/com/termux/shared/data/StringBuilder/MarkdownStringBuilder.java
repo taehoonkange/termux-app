@@ -7,6 +7,11 @@ public class MarkdownStringBuilder implements ObjectStringBuilder {
     private StringBuilder builder = new StringBuilder();
 
     @Override
+    public void append(String string) {
+        builder.append(string);
+    }
+
+    @Override
     public void appendTitle(String title) {
         builder.append("## ").append(title);
     }
