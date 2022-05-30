@@ -1,7 +1,5 @@
 package com.termux.shared.net.socket.local;
 
-import android.util.Pair;
-
 import androidx.annotation.NonNull;
 
 import com.termux.shared.data.DataUtils;
@@ -9,9 +7,6 @@ import com.termux.shared.errors.Error;
 import com.termux.shared.jni.models.JniResult;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
-import com.termux.shared.net.socket.local.StringGenerator.LocalClientSocketStringGenerator;
-import com.termux.shared.net.socket.local.StringGenerator.PeerCredStringGenerator;
-import com.termux.shared.net.socket.local.StringGenerator.StringGenerator;
 
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -20,8 +15,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 /** The client socket for {@link LocalSocketManager}. */
 public class LocalClientSocket implements Closeable {
@@ -52,9 +45,6 @@ public class LocalClientSocket implements Closeable {
     /** The {@link InputStream} implementation for the {@link LocalClientSocket}. */
     @NonNull protected final SocketInputStream mInputStream;
 
-    /** {@link LocalClientSocketStringGenerator} for {@link LocalClientSocket}. */
-    private LocalClientSocketStringGenerator stringGenerator;
-
     /**
      * Create an new instance of {@link LocalClientSocket}.
      *
@@ -72,8 +62,6 @@ public class LocalClientSocket implements Closeable {
 
         setFD(fd);
         mPeerCred.fillPeerCred(localSocketManager.getContext());
-
-        stringGenerator = new LocalClientSocketStringGenerator(mPeerCred);
     }
 
 
@@ -137,15 +125,15 @@ public class LocalClientSocket implements Closeable {
 
         if (mFD < 0) {
             return LocalSocketErrno.ERRNO_USING_CLIENT_SOCKET_WITH_INVALID_FD.getError(mFD,
-                mLocalSocketRunConfig.getTitle());
+                    mLocalSocketRunConfig.getTitle());
         }
 
         JniResult result = LocalSocketManager.read(mLocalSocketRunConfig.getLogTitle() + " (client)",
-            mFD, data,
-            mLocalSocketRunConfig.getDeadline() > 0 ? mCreationTime + mLocalSocketRunConfig.getDeadline() : 0);
+                mFD, data,
+                mLocalSocketRunConfig.getDeadline() > 0 ? mCreationTime + mLocalSocketRunConfig.getDeadline() : 0);
         if (result == null || result.retval != 0) {
             return LocalSocketErrno.ERRNO_READ_DATA_FROM_CLIENT_SOCKET_FAILED.getError(
-                mLocalSocketRunConfig.getTitle(), JniResult.getErrorString(result));
+                    mLocalSocketRunConfig.getTitle(), JniResult.getErrorString(result));
         }
 
         bytesRead.value = result.intData;
@@ -170,15 +158,15 @@ public class LocalClientSocket implements Closeable {
     public Error send(@NonNull byte[] data) {
         if (mFD < 0) {
             return LocalSocketErrno.ERRNO_USING_CLIENT_SOCKET_WITH_INVALID_FD.getError(mFD,
-                mLocalSocketRunConfig.getTitle());
+                    mLocalSocketRunConfig.getTitle());
         }
 
         JniResult result = LocalSocketManager.send(mLocalSocketRunConfig.getLogTitle() + " (client)",
-            mFD, data,
-            mLocalSocketRunConfig.getDeadline() > 0 ? mCreationTime + mLocalSocketRunConfig.getDeadline() : 0);
+                mFD, data,
+                mLocalSocketRunConfig.getDeadline() > 0 ? mCreationTime + mLocalSocketRunConfig.getDeadline() : 0);
         if (result == null || result.retval != 0) {
             return LocalSocketErrno.ERRNO_SEND_DATA_TO_CLIENT_SOCKET_FAILED.getError(
-                mLocalSocketRunConfig.getTitle(), JniResult.getErrorString(result));
+                    mLocalSocketRunConfig.getTitle(), JniResult.getErrorString(result));
         }
 
         return null;
@@ -208,10 +196,10 @@ public class LocalClientSocket implements Closeable {
             // so just read the exception message and not the stack trace, otherwise it would result
             // in a messy nested error message.
             return LocalSocketErrno.ERRNO_READ_DATA_FROM_INPUT_STREAM_OF_CLIENT_SOCKET_FAILED_WITH_EXCEPTION.getError(
-                mLocalSocketRunConfig.getTitle(), DataUtils.getSpaceIndentedString(e.getMessage(), 1));
+                    mLocalSocketRunConfig.getTitle(), DataUtils.getSpaceIndentedString(e.getMessage(), 1));
         } catch (Exception e) {
             return LocalSocketErrno.ERRNO_READ_DATA_FROM_INPUT_STREAM_OF_CLIENT_SOCKET_FAILED_WITH_EXCEPTION.getError(
-                e, mLocalSocketRunConfig.getTitle(), e.getMessage());
+                    e, mLocalSocketRunConfig.getTitle(), e.getMessage());
         } finally {
             if (closeStreamOnFinish) {
                 try { inputStreamReader.close();
@@ -247,10 +235,10 @@ public class LocalClientSocket implements Closeable {
             // so just read the exception message and not the stack trace, otherwise it would result
             // in a messy nested error message.
             return LocalSocketErrno.ERRNO_SEND_DATA_TO_OUTPUT_STREAM_OF_CLIENT_SOCKET_FAILED_WITH_EXCEPTION.getError(
-                mLocalSocketRunConfig.getTitle(), DataUtils.getSpaceIndentedString(e.getMessage(), 1));
+                    mLocalSocketRunConfig.getTitle(), DataUtils.getSpaceIndentedString(e.getMessage(), 1));
         } catch (Exception e) {
             return LocalSocketErrno.ERRNO_SEND_DATA_TO_OUTPUT_STREAM_OF_CLIENT_SOCKET_FAILED_WITH_EXCEPTION.getError(
-                e, mLocalSocketRunConfig.getTitle(), e.getMessage());
+                    e, mLocalSocketRunConfig.getTitle(), e.getMessage());
         } finally {
             if (closeStreamOnFinish) {
                 try {
@@ -279,7 +267,7 @@ public class LocalClientSocket implements Closeable {
 
         if (mFD < 0) {
             return LocalSocketErrno.ERRNO_USING_CLIENT_SOCKET_WITH_INVALID_FD.getError(mFD,
-                mLocalSocketRunConfig.getTitle());
+                    mLocalSocketRunConfig.getTitle());
         }
 
         if (checkDeadline && mLocalSocketRunConfig.getDeadline() > 0 && System.currentTimeMillis() > (mCreationTime + mLocalSocketRunConfig.getDeadline())) {
@@ -289,7 +277,7 @@ public class LocalClientSocket implements Closeable {
         JniResult result = LocalSocketManager.available(mLocalSocketRunConfig.getLogTitle() + " (client)", mLocalSocketRunConfig.getFD());
         if (result == null || result.retval != 0) {
             return LocalSocketErrno.ERRNO_CHECK_AVAILABLE_DATA_ON_CLIENT_SOCKET_FAILED.getError(
-                mLocalSocketRunConfig.getTitle(), JniResult.getErrorString(result));
+                    mLocalSocketRunConfig.getTitle(), JniResult.getErrorString(result));
         }
 
         available.value = result.intData;
@@ -302,10 +290,10 @@ public class LocalClientSocket implements Closeable {
     public Error setReadTimeout() {
         if (mFD >= 0) {
             JniResult result = LocalSocketManager.setSocketReadTimeout(mLocalSocketRunConfig.getLogTitle() + " (client)",
-                mFD, mLocalSocketRunConfig.getReceiveTimeout());
+                    mFD, mLocalSocketRunConfig.getReceiveTimeout());
             if (result == null || result.retval != 0) {
                 return LocalSocketErrno.ERRNO_SET_CLIENT_SOCKET_READ_TIMEOUT_FAILED.getError(
-                    mLocalSocketRunConfig.getTitle(), mLocalSocketRunConfig.getReceiveTimeout(), JniResult.getErrorString(result));
+                        mLocalSocketRunConfig.getTitle(), mLocalSocketRunConfig.getReceiveTimeout(), JniResult.getErrorString(result));
             }
         }
         return null;
@@ -315,10 +303,10 @@ public class LocalClientSocket implements Closeable {
     public Error setWriteTimeout() {
         if (mFD >= 0) {
             JniResult result = LocalSocketManager.setSocketSendTimeout(mLocalSocketRunConfig.getLogTitle() + " (client)",
-                mFD, mLocalSocketRunConfig.getSendTimeout());
+                    mFD, mLocalSocketRunConfig.getSendTimeout());
             if (result == null || result.retval != 0) {
                 return LocalSocketErrno.ERRNO_SET_CLIENT_SOCKET_SEND_TIMEOUT_FAILED.getError(
-                    mLocalSocketRunConfig.getTitle(), mLocalSocketRunConfig.getSendTimeout(), JniResult.getErrorString(result));
+                        mLocalSocketRunConfig.getTitle(), mLocalSocketRunConfig.getSendTimeout(), JniResult.getErrorString(result));
             }
         }
         return null;
@@ -371,29 +359,41 @@ public class LocalClientSocket implements Closeable {
         return new InputStreamReader(getInputStream());
     }
 
-    /**
-     * Set log variables {@link List < Pair <String, Object>>} for {@link LocalClientSocketStringGenerator}.
-     */
-    private void setLogVariableList() {
-        stringGenerator.setLogVariableList(new ArrayList<Pair<String, Object>>() {{
-            add(Pair.create("FD", mFD));
-            add(Pair.create("Creation Time", mCreationTime));
-        }});
-    }
+
 
     /** Get a log {@link String} for the {@link LocalClientSocket}. */
     @NonNull
     public String getLogString() {
-        setLogVariableList();
-        return stringGenerator.getLogString();
+        StringBuilder logString = new StringBuilder();
+
+        logString.append("Client Socket:");
+        logString.append("\n").append(Logger.getSingleLineLogStringEntry("FD", mFD, "-"));
+        logString.append("\n").append(Logger.getSingleLineLogStringEntry("Creation Time", mCreationTime, "-"));
+        logString.append("\n\n\n");
+
+        logString.append(mPeerCred.getLogString());
+
+        return logString.toString();
     }
 
     /** Get a markdown {@link String} for the {@link LocalClientSocket}. */
     @NonNull
     public String getMarkdownString() {
-        setLogVariableList();
-        return stringGenerator.getMarkdownString();
+        StringBuilder markdownString = new StringBuilder();
+
+        markdownString.append("## ").append("Client Socket");
+        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("FD", mFD, "-"));
+        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Creation Time", mCreationTime, "-"));
+        markdownString.append("\n\n\n");
+
+        markdownString.append(mPeerCred.getMarkdownString());
+
+        return markdownString.toString();
     }
+
+
+
+
 
     /** Wrapper class to allow pass by reference of int values. */
     public static final class MutableInt {
