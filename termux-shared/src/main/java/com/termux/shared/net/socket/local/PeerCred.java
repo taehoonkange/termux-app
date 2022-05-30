@@ -1,7 +1,6 @@
 package com.termux.shared.net.socket.local;
 
 import android.content.Context;
-import android.util.Pair;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -10,11 +9,6 @@ import com.termux.shared.android.ProcessUtils;
 import com.termux.shared.android.UserUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
-import com.termux.shared.net.socket.local.StringGenerator.PeerCredStringGenerator;
-import com.termux.shared.net.socket.local.StringGenerator.StringGenerator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /** The {@link PeerCred} of the {@link LocalClientSocket} containing info of client/peer. */
 @Keep
@@ -40,13 +34,9 @@ public class PeerCred {
     /** Command line that started the process. */
     public String cmdline;
 
-    /** {@link PeerCredStringGenerator} for {@link PeerCred}. */
-    private PeerCredStringGenerator stringGenerator;
-
     PeerCred() {
         // Initialize to -1 instead of 0 in case a failed getPeerCred()/getsockopt() call somehow doesn't report failure and returns the uid of root
         pid = -1; uid = -1; gid = -1;
-        stringGenerator = new PeerCredStringGenerator();
     }
 
     /** Set data that was not set by JNI. */
@@ -57,12 +47,12 @@ public class PeerCred {
 
     /** Set {@link #uname} and {@link #gname} if not set. */
     public void fillUnameAndGname(@NonNull Context context) {
-       uname = UserUtils.getNameForUid(context, uid);
+        uname = UserUtils.getNameForUid(context, uid);
 
-       if (gid != uid)
-           gname = UserUtils.getNameForUid(context, gid);
-       else
-           gname = uname;
+        if (gid != uid)
+            gname = UserUtils.getNameForUid(context, gid);
+        else
+            gname = uname;
     }
 
     /** Set {@link #pname} if not set. */
@@ -86,23 +76,20 @@ public class PeerCred {
         return peerCred.getLogString();
     }
 
-    /**
-     * Set log variables {@link List < Pair <String, Object>>} for {@link PeerCredStringGenerator}.
-     */
-    private void setLogVariableList() {
-        stringGenerator.setLogVariableList(new ArrayList<Pair<String, Object>>() {{
-            add(Pair.create("Process", getProcessString()));
-            add(Pair.create("User", getUserString()));
-            add(Pair.create("Group", getGroupString()));
-            add(Pair.create("Cmdline", cmdline));
-        }});
-    }
-
     /** Get a log {@link String} for the {@link PeerCred}. */
     @NonNull
     public String getLogString() {
-        setLogVariableList();
-        return stringGenerator.getLogString();
+        StringBuilder logString = new StringBuilder();
+
+        logString.append("Peer Cred:");
+        logString.append("\n").append(Logger.getSingleLineLogStringEntry("Process", getProcessString(), "-"));
+        logString.append("\n").append(Logger.getSingleLineLogStringEntry("User", getUserString(), "-"));
+        logString.append("\n").append(Logger.getSingleLineLogStringEntry("Group", getGroupString(), "-"));
+
+        if (cmdline != null)
+            logString.append("\n").append(Logger.getMultiLineLogStringEntry("Cmdline", cmdline, "-"));
+
+        return logString.toString();
     }
 
     /**
@@ -119,8 +106,17 @@ public class PeerCred {
     /** Get a markdown {@link String} for the {@link PeerCred}. */
     @NonNull
     public String getMarkdownString() {
-        setLogVariableList();
-        return stringGenerator.getMarkdownString();
+        StringBuilder markdownString = new StringBuilder();
+
+        markdownString.append("## ").append("Peer Cred");
+        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Process", getProcessString(), "-"));
+        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("User", getUserString(), "-"));
+        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Group", getGroupString(), "-"));
+
+        if (cmdline != null)
+            markdownString.append("\n").append(MarkdownUtils.getMultiLineMarkdownStringEntry("Cmdline", cmdline, "-"));
+
+        return markdownString.toString();
     }
 
     @NonNull
