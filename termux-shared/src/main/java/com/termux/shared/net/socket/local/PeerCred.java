@@ -7,6 +7,9 @@ import androidx.annotation.NonNull;
 
 import com.termux.shared.android.ProcessUtils;
 import com.termux.shared.android.UserUtils;
+import com.termux.shared.data.StringBuilder.LogStringBuilder;
+import com.termux.shared.data.StringBuilder.MarkdownStringBuilder;
+import com.termux.shared.data.StringBuilder.ObjectStringBuilder;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
 
@@ -76,20 +79,10 @@ public class PeerCred {
         return peerCred.getLogString();
     }
 
-    /** Get a log {@link String} for the {@link PeerCred}. */
+    /** Get a log {@link String} by {@link LogStringBuilder} for the {@link PeerCred}. */
     @NonNull
     public String getLogString() {
-        StringBuilder logString = new StringBuilder();
-
-        logString.append("Peer Cred:");
-        logString.append("\n").append(Logger.getSingleLineLogStringEntry("Process", getProcessString(), "-"));
-        logString.append("\n").append(Logger.getSingleLineLogStringEntry("User", getUserString(), "-"));
-        logString.append("\n").append(Logger.getSingleLineLogStringEntry("Group", getGroupString(), "-"));
-
-        if (cmdline != null)
-            logString.append("\n").append(Logger.getMultiLineLogStringEntry("Cmdline", cmdline, "-"));
-
-        return logString.toString();
+        return getObjectString(new LogStringBuilder());
     }
 
     /**
@@ -103,20 +96,24 @@ public class PeerCred {
         return peerCred.getMarkdownString();
     }
 
-    /** Get a markdown {@link String} for the {@link PeerCred}. */
+    /** Get a markdown {@link String} by {@link MarkdownStringBuilder} for the {@link PeerCred}. */
     @NonNull
     public String getMarkdownString() {
-        StringBuilder markdownString = new StringBuilder();
+        return getObjectString(new MarkdownStringBuilder());
+    }
 
-        markdownString.append("## ").append("Peer Cred");
-        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Process", getProcessString(), "-"));
-        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("User", getUserString(), "-"));
-        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Group", getGroupString(), "-"));
+    /** Get a log {@link String} by the type of {@link ObjectStringBuilder} for the {@link PeerCred}. */
+    @NonNull
+    public String getObjectString(ObjectStringBuilder builder) {
+        builder.appendTitle("Peer Cred");
+        builder.appendSLEntry("Process", getProcessString());
+        builder.appendSLEntry("User", getUserString());
+        builder.appendSLEntry("Group", getGroupString());
 
         if (cmdline != null)
-            markdownString.append("\n").append(MarkdownUtils.getMultiLineMarkdownStringEntry("Cmdline", cmdline, "-"));
+            builder.appendMLEntry("Cmdline", cmdline);
 
-        return markdownString.toString();
+        return builder.getString();
     }
 
     @NonNull

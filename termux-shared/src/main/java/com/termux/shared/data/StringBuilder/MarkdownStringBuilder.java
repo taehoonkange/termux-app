@@ -1,23 +1,24 @@
 package com.termux.shared.data.StringBuilder;
 
 import com.termux.shared.logger.Logger;
+import com.termux.shared.markdown.MarkdownUtils;
 
-public class LogStringBuilder implements ObjectStringBuilder{
+public class MarkdownStringBuilder implements ObjectStringBuilder {
     private StringBuilder builder = new StringBuilder();
 
     @Override
     public void appendTitle(String title) {
-        builder.append(title);
+        builder.append("## ").append(title);
     }
 
     @Override
     public void appendSLEntry(String label, Object object) {
-        builder.append("\n").append(Logger.getSingleLineLogStringEntry(label, object, "-"));
+        builder.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry(label, object, "-"));
     }
 
     @Override
     public void appendMLEntry(String label, Object object) {
-        builder.append("\n").append(Logger.getMultiLineLogStringEntry(label, object, "-"));
+        builder.append("\n").append(MarkdownUtils.getMultiLineMarkdownStringEntry(label, object, "-"));
     }
 
     @Override
