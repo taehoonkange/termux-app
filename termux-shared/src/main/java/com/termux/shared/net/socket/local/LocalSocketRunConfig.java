@@ -2,6 +2,9 @@ package com.termux.shared.net.socket.local;
 
 import androidx.annotation.NonNull;
 
+import com.termux.shared.data.StringBuilder.LogStringBuilder;
+import com.termux.shared.data.StringBuilder.MarkdownStringBuilder;
+import com.termux.shared.data.StringBuilder.ObjectStringBuilder;
 import com.termux.shared.file.FileUtils;
 import com.termux.shared.logger.Logger;
 import com.termux.shared.markdown.MarkdownUtils;
@@ -207,22 +210,10 @@ public class LocalSocketRunConfig implements Serializable {
         return config.getLogString();
     }
 
-    /** Get a log {@link String} for the {@link LocalSocketRunConfig}. */
+    /** Get a log {@link String} by {@link LogStringBuilder} for the {@link LocalSocketRunConfig}. */
     @NonNull
     public String getLogString() {
-        StringBuilder logString = new StringBuilder();
-
-        logString.append(mTitle).append(" Socket Server Run Config:");
-        logString.append("\n").append(Logger.getSingleLineLogStringEntry("Path", mPath, "-"));
-        logString.append("\n").append(Logger.getSingleLineLogStringEntry("AbstractNamespaceSocket", mAbstractNamespaceSocket, "-"));
-        logString.append("\n").append(Logger.getSingleLineLogStringEntry("LocalSocketManagerClient", mLocalSocketManagerClient.getClass().getName(), "-"));
-        logString.append("\n").append(Logger.getSingleLineLogStringEntry("FD", mFD, "-"));
-        logString.append("\n").append(Logger.getSingleLineLogStringEntry("ReceiveTimeout", getReceiveTimeout(), "-"));
-        logString.append("\n").append(Logger.getSingleLineLogStringEntry("SendTimeout", getSendTimeout(), "-"));
-        logString.append("\n").append(Logger.getSingleLineLogStringEntry("Deadline", getDeadline(), "-"));
-        logString.append("\n").append(Logger.getSingleLineLogStringEntry("Backlog", getBacklog(), "-"));
-
-        return logString.toString();
+        return getObjectString(new LogStringBuilder());
     }
 
     /**
@@ -236,22 +227,27 @@ public class LocalSocketRunConfig implements Serializable {
         return config.getMarkdownString();
     }
 
-    /** Get a markdown {@link String} for the {@link LocalSocketRunConfig}. */
+    /** Get a markdown {@link String} by {@link MarkdownStringBuilder} for the {@link LocalSocketRunConfig}. */
     @NonNull
     public String getMarkdownString() {
-        StringBuilder markdownString = new StringBuilder();
+        return getObjectString(new MarkdownStringBuilder());
+    }
 
-        markdownString.append("## ").append(mTitle).append(" Socket Server Run Config");
-        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Path", mPath, "-"));
-        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("AbstractNamespaceSocket", mAbstractNamespaceSocket, "-"));
-        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("LocalSocketManagerClient", mLocalSocketManagerClient.getClass().getName(), "-"));
-        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("FD", mFD, "-"));
-        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("ReceiveTimeout", getReceiveTimeout(), "-"));
-        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("SendTimeout", getSendTimeout(), "-"));
-        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Deadline", getDeadline(), "-"));
-        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Backlog", getBacklog(), "-"));
+    /** Get a log {@link String} by the type of {@link ObjectStringBuilder} for the {@link LocalSocketRunConfig}. */
+    @NonNull
+    public String getObjectString(ObjectStringBuilder builder) {
+        builder.appendTitle(mTitle + " Socket Server Run Config");
 
-        return markdownString.toString();
+        builder.appendSLEntry("Path", mPath);
+        builder.appendSLEntry("AbstractNamespaceSocket", mAbstractNamespaceSocket);
+        builder.appendSLEntry("LocalSocketManagerClient", mLocalSocketManagerClient.getClass().getName());
+        builder.appendSLEntry("FD", mFD);
+        builder.appendSLEntry("ReceiveTimeout", getReceiveTimeout());
+        builder.appendSLEntry("SendTimeout", getSendTimeout());
+        builder.appendSLEntry("Deadline", getDeadline());
+        builder.appendSLEntry("Backlog", getBacklog());
+
+        return builder.getString();
     }
 
 

@@ -364,13 +364,13 @@ public class LocalClientSocket implements Closeable {
 
 
 
-    /** Get a log {@link String} for the {@link LocalClientSocket}. */
+    /** Get a log {@link String} by {@link LogStringBuilder} for the {@link LocalClientSocket}. */
     @NonNull
     public String getLogString() {
         return getObjectString(new LogStringBuilder());
     }
 
-    /** Get a markdown {@link String} for the {@link LocalClientSocket}. */
+    /** Get a markdown {@link String} by {@link MarkdownStringBuilder} for the {@link LocalClientSocket}. */
     @NonNull
     public String getMarkdownString() {
         return getObjectString(new MarkdownStringBuilder());
