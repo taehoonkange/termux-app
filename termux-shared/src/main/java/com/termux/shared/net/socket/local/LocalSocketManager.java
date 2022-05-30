@@ -310,19 +310,19 @@ public class LocalSocketManager {
     /** Wrapper to call {@link ILocalSocketManager#onError(LocalSocketManager, LocalClientSocket, Error)} in a new thread. */
     public void onError(@Nullable LocalClientSocket clientSocket, @NonNull Error error) {
         startLocalSocketManagerClientThread(() ->
-            mLocalSocketManagerClient.onError(this, clientSocket, error));
+                mLocalSocketManagerClient.onError(this, clientSocket, error));
     }
 
     /** Wrapper to call {@link ILocalSocketManager#onDisallowedClientConnected(LocalSocketManager, LocalClientSocket, Error)} in a new thread. */
     public void onDisallowedClientConnected(@NonNull LocalClientSocket clientSocket, @NonNull Error error) {
         startLocalSocketManagerClientThread(() ->
-            mLocalSocketManagerClient.onDisallowedClientConnected(this, clientSocket, error));
+                mLocalSocketManagerClient.onDisallowedClientConnected(this, clientSocket, error));
     }
 
     /** Wrapper to call {@link ILocalSocketManager#onClientAccepted(LocalSocketManager, LocalClientSocket)} in a new thread. */
     public void onClientAccepted(@NonNull LocalClientSocket clientSocket) {
         startLocalSocketManagerClientThread(() ->
-            mLocalSocketManagerClient.onClientAccepted(this, clientSocket));
+                mLocalSocketManagerClient.onClientAccepted(this, clientSocket));
     }
 
     /** All client accept logic must be run on separate threads so that incoming client acceptance is not blocked. */
@@ -370,10 +370,10 @@ public class LocalSocketManager {
      */
     protected Thread.UncaughtExceptionHandler getLocalSocketManagerClientThreadUEHOrDefault() {
         Thread.UncaughtExceptionHandler uncaughtExceptionHandler =
-            mLocalSocketManagerClient.getLocalSocketManagerClientThreadUEH(this);
+                mLocalSocketManagerClient.getLocalSocketManagerClientThreadUEH(this);
         if (uncaughtExceptionHandler == null)
             uncaughtExceptionHandler = (t, e) ->
-                Logger.logStackTraceWithMessage(LOG_TAG, "Uncaught exception for " + t + " in " + mLocalSocketRunConfig.getTitle() + " server", e);
+                    Logger.logStackTraceWithMessage(LOG_TAG, "Uncaught exception for " + t + " in " + mLocalSocketRunConfig.getTitle() + " server", e);
         return uncaughtExceptionHandler;
     }
 
