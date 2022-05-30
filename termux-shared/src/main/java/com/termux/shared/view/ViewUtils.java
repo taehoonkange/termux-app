@@ -18,17 +18,27 @@ import com.termux.shared.logger.Logger;
 
 public class ViewUtils {
 
-    /** Log root view events. */
-    public static boolean VIEW_UTILS_LOGGING_ENABLED = false;
+    private ViewUtils() { }
+    // initialization on demand holder idiom
+    private static class ViewUtilsHolderIdiom {
+        private static final ViewUtils instance = new ViewUtils();
+    }
+    // instance getter of singleton pattern
+    public static ViewUtils getInstance() {
+        return ViewUtilsHolderIdiom.instance;
+    }
 
-    private static final String LOG_TAG = "ViewUtils";
+    /** Log root view events. */
+    public boolean VIEW_UTILS_LOGGING_ENABLED = false;
+
+    private final String LOG_TAG = "ViewUtils";
 
     /**
      * Sets whether view utils logging is enabled or not.
      *
      * @param value The boolean value that defines the state.
      */
-    public static void setIsViewUtilsLoggingEnabled(boolean value) {
+    public void setIsViewUtilsLoggingEnabled(boolean value) {
         VIEW_UTILS_LOGGING_ENABLED = value;
     }
 
@@ -41,7 +51,7 @@ public class ViewUtils {
      * @param statusBarHeight The status bar height received by {@link View.OnApplyWindowInsetsListener}.
      * @return Returns {@code true} if view is fully visible.
      */
-    public static boolean isViewFullyVisible(View view, int statusBarHeight) {
+    public boolean isViewFullyVisible(View view, int statusBarHeight) {
         Rect[] windowAndViewRects = getWindowAndViewRects(view, statusBarHeight);
         if (windowAndViewRects == null)
             return false;
@@ -61,7 +71,7 @@ public class ViewUtils {
      * if view is not visible.
      */
     @Nullable
-    public static Rect[] getWindowAndViewRects(View view, int statusBarHeight) {
+    public Rect[] getWindowAndViewRects(View view, int statusBarHeight) {
         if (view == null || !view.isShown())
             return null;
 
@@ -151,7 +161,7 @@ public class ViewUtils {
      * @param r2 The rectangle being tested that should be above.
      * @return Returns {@code true} if r2 is above r1.
      */
-    public static boolean isRectAbove(@NonNull Rect r1, @NonNull Rect r2) {
+    public boolean isRectAbove(@NonNull Rect r1, @NonNull Rect r2) {
         // check for empty first
 
         // now check if above
@@ -171,7 +181,7 @@ public class ViewUtils {
      * @param context The {@link Context} to check with.
      * @return {@link Configuration#ORIENTATION_PORTRAIT} or {@link Configuration#ORIENTATION_LANDSCAPE}.
      */
-    public static int getDisplayOrientation(@NonNull Context context) {
+    public int getDisplayOrientation(@NonNull Context context) {
         Point size = getDisplaySize(context, false);
         return (size.x < size.y) ? Configuration.ORIENTATION_PORTRAIT : Configuration.ORIENTATION_LANDSCAPE;
     }
@@ -186,7 +196,7 @@ public class ViewUtils {
      *                     and can be smaller than physical display size in multi-window mode.
      * @return Returns the display size as {@link Point}.
      */
-    public static Point getDisplaySize( @NonNull Context context, boolean activitySize) {
+    public Point getDisplaySize( @NonNull Context context, boolean activitySize) {
         // android.view.WindowManager.getDefaultDisplay() and Display.getSize() are deprecated in
         // API 30 and give wrong values in API 30 for activitySize=false in multi-window
         androidx.window.WindowManager windowManager = new androidx.window.WindowManager(context);
@@ -199,20 +209,20 @@ public class ViewUtils {
     }
 
     /** Convert {@link Rect} to {@link String}. */
-    public static String toRectString(Rect rect) {
+    public String toRectString(Rect rect) {
         if (rect == null) return "null";
         return "(" + rect.left + "," + rect.top + "), (" + rect.right + "," + rect.bottom + ")";
     }
 
     /** Convert {@link Point} to {@link String}. */
-    public static String toPointString(Point point) {
+    public String toPointString(Point point) {
         if (point == null) return "null";
         return "(" + point.x + "," + point.y + ")";
     }
 
     /** Get the {@link Activity} associated with the {@link Context} if available. */
     @Nullable
-    public static Activity getActivity(Context context) {
+    public Activity getActivity(Context context) {
         while (context instanceof ContextWrapper) {
             if (context instanceof Activity) {
                 return (Activity)context;
@@ -223,22 +233,21 @@ public class ViewUtils {
     }
 
     /** Convert value in device independent pixels (dp) to pixels (px) units. */
-    public static int dpToPx(Context context, int dp) {
+    public int dpToPx(Context context, int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources().getDisplayMetrics());
     }
 
 
-    public static void setLayoutMarginsInDp(@NonNull View view, int left, int top, int right, int bottom) {
+    public void setLayoutMarginsInDp(@NonNull View view, int left, int top, int right, int bottom) {
         Context context = view.getContext();
         setLayoutMarginsInPixels(view, dpToPx(context, left), dpToPx(context, top), dpToPx(context, right), dpToPx(context, bottom));
     }
 
-    public static void setLayoutMarginsInPixels(@NonNull View view, int left, int top, int right, int bottom) {
+    public void setLayoutMarginsInPixels(@NonNull View view, int left, int top, int right, int bottom) {
         if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
             params.setMargins(left, top, right, bottom);
             view.setLayoutParams(params);
         }
     }
-
 }

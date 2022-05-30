@@ -76,21 +76,31 @@ public class TermuxActivityRootView extends LinearLayout implements ViewTreeObse
 
     private static int mStatusBarHeight;
 
+    /**
+     * The {@link ViewUtils} is need for implementing SingleTon Pattern
+     */
+    ViewUtils viewUtils;
+
     public TermuxActivityRootView(Context context) {
         super(context);
+        setViewUtilsSingleton();
     }
 
     public TermuxActivityRootView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        setViewUtilsSingleton();
     }
 
     public TermuxActivityRootView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setViewUtilsSingleton();
     }
 
     public void setActivity(TermuxActivity activity) {
         mActivity = activity;
     }
+
+    private void setViewUtilsSingleton() { viewUtils = ViewUtils.getInstance(); }
 
     /**
      * Sets whether root view logging is enabled or not.
@@ -138,17 +148,17 @@ public class TermuxActivityRootView extends LinearLayout implements ViewTreeObse
 
         if (root_view_logging_enabled) {
             Logger.logVerbose(LOG_TAG, ":\nonGlobalLayout:");
-            Logger.logVerbose(LOG_TAG, "windowAvailableRect " + ViewUtils.toRectString(windowAvailableRect) + ", bottomSpaceViewRect " + ViewUtils.toRectString(bottomSpaceViewRect));
+            Logger.logVerbose(LOG_TAG, "windowAvailableRect " + viewUtils.toRectString(windowAvailableRect) + ", bottomSpaceViewRect " + viewUtils.toRectString(bottomSpaceViewRect));
             Logger.logVerbose(LOG_TAG, "windowAvailableRect.bottom " + windowAvailableRect.bottom +
                 ", bottomSpaceViewRect.bottom " +bottomSpaceViewRect.bottom +
                 ", diff " + (bottomSpaceViewRect.bottom - windowAvailableRect.bottom) + ", bottom " + bottomMargin +
-                ", isVisible " + windowAvailableRect.contains(bottomSpaceViewRect) + ", isRectAbove " + ViewUtils.isRectAbove(windowAvailableRect, bottomSpaceViewRect) +
+                ", isVisible " + windowAvailableRect.contains(bottomSpaceViewRect) + ", isRectAbove " + viewUtils.isRectAbove(windowAvailableRect, bottomSpaceViewRect) +
                 ", isVisibleBecauseMargin " + isVisibleBecauseMargin + ", isVisibleBecauseExtraMargin " + isVisibleBecauseExtraMargin);
         }
 
         // If the bottomSpaceViewRect is visible, then remove the margin if needed
         //boolean isVisible = windowAvailableRect.contains(bottomSpaceViewRect); // rect.right comparison often fails in landscape
-        boolean isVisible = ViewUtils.isRectAbove(windowAvailableRect, bottomSpaceViewRect);
+        boolean isVisible = viewUtils.isRectAbove(windowAvailableRect, bottomSpaceViewRect);
         if (isVisible) {
             // If visible because of margin, i.e the bottom of bottomSpaceViewRect equals that of windowAvailableRect
             // and a margin has been added
@@ -277,7 +287,7 @@ public class TermuxActivityRootView extends LinearLayout implements ViewTreeObse
         if (bottomSpaceView == null) return null;
 
         // Get the position Rects of the bottom space view and the main window holding it
-        Rect[] windowAndViewRects = ViewUtils.getWindowAndViewRects(bottomSpaceView, mStatusBarHeight);
+        Rect[] windowAndViewRects = viewUtils.getWindowAndViewRects(bottomSpaceView, mStatusBarHeight);
         if (windowAndViewRects == null)
             return null;
         return windowAndViewRects;

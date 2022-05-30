@@ -73,9 +73,15 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
 
     private static final String LOG_TAG = "TermuxTerminalViewClient";
 
+    /**
+     * The {@link ViewUtils} is need for implementing SingleTon Pattern
+     */
+    ViewUtils viewUtils;
+
     public TermuxTerminalViewClient(TermuxActivity activity, TermuxTerminalSessionClient termuxTerminalSessionClient) {
         this.mActivity = activity;
         this.mTermuxTerminalSessionClient = termuxTerminalSessionClient;
+        viewUtils = ViewUtils.getInstance();
     }
 
     public TermuxActivity getActivity() {
@@ -103,7 +109,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
 
         // Piggyback on the terminal view key logging toggle for now, should add a separate toggle in future
         mActivity.getTermuxActivityRootView().setIsRootViewLoggingEnabled(isKeyLoggingEnabled);
-        ViewUtils.setIsViewUtilsLoggingEnabled(isKeyLoggingEnabled);
+        viewUtils.setIsViewUtilsLoggingEnabled(isKeyLoggingEnabled);
     }
 
     /**
