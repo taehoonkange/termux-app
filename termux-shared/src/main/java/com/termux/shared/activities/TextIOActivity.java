@@ -56,6 +56,11 @@ public class TextIOActivity extends AppCompatActivity {
     private TextIOInfo mTextIOInfo;
     private Bundle mBundle;
 
+    /**
+     * The {@link KeyboardUtils} is need for implementing SingleTon Pattern
+     */
+    KeyboardUtils keyboardUtils;
+
     private static final String LOG_TAG = "TextIOActivity";
 
     @Override
@@ -83,6 +88,8 @@ public class TextIOActivity extends AppCompatActivity {
             mBundle = intent.getExtras();
         else if (savedInstanceState != null)
             mBundle = savedInstanceState;
+
+        keyboardUtils = KeyboardUtils.getInstance();
 
         updateUI();
     }
@@ -240,14 +247,14 @@ public class TextIOActivity extends AppCompatActivity {
     /** Confirm current text and send it back to calling {@link Activity}. */
     private void confirm() {
         updateTextIOInfoText();
-        KeyboardUtils.hideSoftKeyboard(this, mTextIOText);
+        keyboardUtils.hideSoftKeyboard(this, mTextIOText);
         setResult(Activity.RESULT_OK, getResultIntent());
         finish();
     }
 
     /** Cancel current text and notify calling {@link Activity}. */
     private void cancel() {
-        KeyboardUtils.hideSoftKeyboard(this, mTextIOText);
+        keyboardUtils.hideSoftKeyboard(this, mTextIOText);
         setResult(Activity.RESULT_CANCELED, getResultIntent());
         finish();
     }

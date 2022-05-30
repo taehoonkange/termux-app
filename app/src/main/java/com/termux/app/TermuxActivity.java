@@ -171,6 +171,11 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
      */
     private boolean mIsInvalidState;
 
+    /**
+     * The {@link ViewUtils} is need for implementing SingleTon Pattern
+     */
+    ViewUtils viewUtils;
+
     private int mNavBarHeight;
 
     private int mTerminalToolbarDefaultHeight;
@@ -222,6 +227,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
             return;
         }
 
+        viewUtils = ViewUtils.getInstance();
         setMargins();
 
         mTermuxActivityRootView = findViewById(R.id.activity_termux_root_view);
@@ -461,7 +467,7 @@ public final class TermuxActivity extends AppCompatActivity implements ServiceCo
         RelativeLayout relativeLayout = findViewById(R.id.activity_termux_root_relative_layout);
         int marginHorizontal = mProperties.getTerminalMarginHorizontal();
         int marginVertical = mProperties.getTerminalMarginVertical();
-        ViewUtils.setLayoutMarginsInDp(relativeLayout, marginHorizontal, marginVertical, marginHorizontal, marginVertical);
+        viewUtils.setLayoutMarginsInDp(relativeLayout, marginHorizontal, marginVertical, marginHorizontal, marginVertical);
     }
 
 

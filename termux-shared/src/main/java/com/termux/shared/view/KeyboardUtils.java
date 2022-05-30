@@ -16,9 +16,19 @@ import com.termux.shared.logger.Logger;
 
 public class KeyboardUtils {
 
-    private static final String LOG_TAG = "KeyboardUtils";
+    private KeyboardUtils() {}
+    // initialization on demand holder idiom
+    private static class KeyboardUtilsHolderIdiom {
+        private static final KeyboardUtils instance = new KeyboardUtils();
+    }
+    // instance getter of singleton pattern
+    public static KeyboardUtils getInstance() {
+        return KeyboardUtils.KeyboardUtilsHolderIdiom.instance;
+    }
 
-    public static void setSoftKeyboardVisibility(@NonNull final Runnable showSoftKeyboardRunnable, final Activity activity, final View view, final boolean visible) {
+    private final String LOG_TAG = "KeyboardUtils";
+
+    public void setSoftKeyboardVisibility(@NonNull final Runnable showSoftKeyboardRunnable, final Activity activity, final View view, final boolean visible) {
         if (visible) {
             // A Runnable with a delay is used, otherwise soft keyboard may not automatically open
             // on some devices, but still may fail
@@ -39,7 +49,7 @@ public class KeyboardUtils {
      * default implementation of {@link InputMethodService#onEvaluateInputViewShown()} and returns
      * {@code true}.
      */
-    public static void toggleSoftKeyboard(final Context context) {
+    public void toggleSoftKeyboard(final Context context) {
         if (context == null) return;
         InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (inputMethodManager != null)
@@ -62,47 +72,47 @@ public class KeyboardUtils {
      * check by passing {@code 0} as {@code flags}.
      * https://cs.android.com/android/platform/superproject/+/android-11.0.0_r3:frameworks/base/core/java/android/inputmethodservice/InputMethodService.java;l=2022
      */
-    public static void showSoftKeyboard(final Context context, final View view) {
+    public void showSoftKeyboard(final Context context, final View view) {
         if (context == null || view == null) return;
         InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (inputMethodManager != null)
             inputMethodManager.showSoftInput(view, 0);
     }
 
-    public static void hideSoftKeyboard(final Context context, final View view) {
+    public void hideSoftKeyboard(final Context context, final View view) {
         if (context == null || view == null) return;
         InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (inputMethodManager != null)
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public static void disableSoftKeyboard(final Activity activity, final View view) {
+    public void disableSoftKeyboard(final Activity activity, final View view) {
         if (activity == null || view == null) return;
         hideSoftKeyboard(activity, view);
         setDisableSoftKeyboardFlags(activity);
     }
 
-    public static void setDisableSoftKeyboardFlags(final Activity activity) {
+    public void setDisableSoftKeyboardFlags(final Activity activity) {
         if (activity != null && activity.getWindow() != null)
             activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM, WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
     }
 
-    public static void clearDisableSoftKeyboardFlags(final Activity activity) {
+    public void clearDisableSoftKeyboardFlags(final Activity activity) {
         if (activity != null && activity.getWindow() != null)
             activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
     }
 
-    public static boolean areDisableSoftKeyboardFlagsSet(final Activity activity) {
+    public boolean areDisableSoftKeyboardFlagsSet(final Activity activity) {
         if (activity == null ||  activity.getWindow() == null) return false;
         return (activity.getWindow().getAttributes().flags & WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM) != 0;
     }
 
-    public static void setSoftKeyboardAlwaysHiddenFlags(final Activity activity) {
+    public void setSoftKeyboardAlwaysHiddenFlags(final Activity activity) {
         if (activity != null && activity.getWindow() != null)
             activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 
-    public static void setSoftInputModeAdjustResize(final Activity activity) {
+    public void setSoftInputModeAdjustResize(final Activity activity) {
         // TODO: The flag is deprecated for API 30 and WindowInset API should be used
         // https://developer.android.com/reference/android/view/WindowManager.LayoutParams#SOFT_INPUT_ADJUST_RESIZE
         // https://medium.com/androiddevelopers/animating-your-keyboard-fb776a8fb66d
@@ -118,7 +128,7 @@ public class KeyboardUtils {
      * @param activity The Activity of the root view for which the visibility should be checked.
      * @return Returns {@code true} if soft keyboard is visible, otherwise {@code false}.
      */
-    public static boolean isSoftKeyboardVisible(final Activity activity) {
+    public boolean isSoftKeyboardVisible(final Activity activity) {
         if (activity != null && activity.getWindow() != null) {
             WindowInsets insets = activity.getWindow().getDecorView().getRootWindowInsets();
             if (insets != null) {
@@ -144,7 +154,7 @@ public class KeyboardUtils {
      * @return Returns {@code true} if device has hardware keys for text input or an external hardware
      * keyboard is connected, otherwise {@code false}.
      */
-    public static boolean isHardKeyboardConnected(final Context context) {
+    public boolean isHardKeyboardConnected(final Context context) {
         if (context == null) return false;
 
         Configuration config = context.getResources().getConfiguration();
@@ -158,7 +168,7 @@ public class KeyboardUtils {
      * @param context The Context for operations.
      * @return Returns {@code true} if device has soft keyboard should be disabled, otherwise {@code false}.
      */
-    public static boolean shouldSoftKeyboardBeDisabled(final Context context, final boolean isSoftKeyboardEnabled, final boolean isSoftKeyboardEnabledOnlyIfNoHardware) {
+    public boolean shouldSoftKeyboardBeDisabled(final Context context, final boolean isSoftKeyboardEnabled, final boolean isSoftKeyboardEnabledOnlyIfNoHardware) {
         // If soft keyboard is disabled by user regardless of hardware keyboard
         if (!isSoftKeyboardEnabled) {
             return true;
@@ -183,7 +193,7 @@ public class KeyboardUtils {
              */
             // If soft keyboard is disabled by user only if hardware keyboard is connected
             if(isSoftKeyboardEnabledOnlyIfNoHardware) {
-                boolean isHardKeyboardConnected = KeyboardUtils.isHardKeyboardConnected(context);
+                boolean isHardKeyboardConnected = isHardKeyboardConnected(context);
                 Logger.logVerbose(LOG_TAG, "Hardware keyboard connected=" + isHardKeyboardConnected);
                 return isHardKeyboardConnected;
             } else {
