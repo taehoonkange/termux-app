@@ -3,6 +3,9 @@ package com.termux.shared.net.socket.local;
 import androidx.annotation.NonNull;
 
 import com.termux.shared.data.DataUtils;
+import com.termux.shared.data.StringBuilder.LogStringBuilder;
+import com.termux.shared.data.StringBuilder.MarkdownStringBuilder;
+import com.termux.shared.data.StringBuilder.ObjectStringBuilder;
 import com.termux.shared.errors.Error;
 import com.termux.shared.jni.models.JniResult;
 import com.termux.shared.logger.Logger;
@@ -364,31 +367,30 @@ public class LocalClientSocket implements Closeable {
     /** Get a log {@link String} for the {@link LocalClientSocket}. */
     @NonNull
     public String getLogString() {
-        StringBuilder logString = new StringBuilder();
-
-        logString.append("Client Socket:");
-        logString.append("\n").append(Logger.getSingleLineLogStringEntry("FD", mFD, "-"));
-        logString.append("\n").append(Logger.getSingleLineLogStringEntry("Creation Time", mCreationTime, "-"));
-        logString.append("\n\n\n");
-
-        logString.append(mPeerCred.getLogString());
-
-        return logString.toString();
+        return getObjectString(new LogStringBuilder());
     }
 
     /** Get a markdown {@link String} for the {@link LocalClientSocket}. */
     @NonNull
     public String getMarkdownString() {
-        StringBuilder markdownString = new StringBuilder();
+        return getObjectString(new MarkdownStringBuilder());
+    }
 
-        markdownString.append("## ").append("Client Socket");
-        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("FD", mFD, "-"));
-        markdownString.append("\n").append(MarkdownUtils.getSingleLineMarkdownStringEntry("Creation Time", mCreationTime, "-"));
-        markdownString.append("\n\n\n");
+    /** Get a log {@link String} by the type of {@link ObjectStringBuilder} for the {@link LocalClientSocket}. */
+    @NonNull
+    public String getObjectString(ObjectStringBuilder builder) {
 
-        markdownString.append(mPeerCred.getMarkdownString());
+        builder.appendTitle("Client Socket:");
+        builder.appendSLEntry("FD", mFD);
+        builder.appendSLEntry("Creation Time", mCreationTime);
+        builder.append("\n\n\n");
 
-        return markdownString.toString();
+        if (builder instanceof LogStringBuilder)
+            builder.append(mPeerCred.getLogString());
+        else
+            builder.append(mPeerCred.getMarkdownString());
+
+        return builder.getString();
     }
 
 
