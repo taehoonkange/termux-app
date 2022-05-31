@@ -278,6 +278,7 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
      *
      * We make copies of each list since items are removed inside the loop.
      */
+    // Implement Command Pattern on `killAllTermuxExecutionCommands()`
     public interface Command { void execute();
     }
     public static class Button {
@@ -310,7 +311,8 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
         @Nullable
         @Override
         public IBinder onBind(Intent intent) {
-            return null;
+            Logger.logVerbose(LOG_TAG, "onBind");
+            return mBinder;
         }
 
         @Override
@@ -351,7 +353,8 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
         @Nullable
         @Override
         public IBinder onBind(Intent intent) {
-            return null;
+            Logger.logVerbose(LOG_TAG, "onBind");
+            return mBinder;
         }
 
         @Override
@@ -389,7 +392,8 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
         @Nullable
         @Override
         public IBinder onBind(Intent intent) {
-            return null;
+            Logger.logVerbose(LOG_TAG, "onBind");
+            return mBinder;
         }
     }
     public class termuxSessionsCommand implements Command {
@@ -410,7 +414,7 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
     }
 
 
-    // Need to apply Design Pattern
+
     private synchronized void killAllTermuxExecutionCommands() {
         Logger.logDebug(LOG_TAG, "Killing TermuxSessions=" + mTermuxSessions.size() + ", TermuxTasks=" + mTermuxTasks.size() + ", PendingPluginExecutionCommands=" + mPendingPluginExecutionCommands.size());
 
@@ -421,12 +425,12 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
         PendingPluginExecution pendingPluginExecution = new PendingPluginExecution();
         Command killPendingPluginExecution = new pendingPluginExecutionCommand(pendingPluginExecution);
 
-        Button button = new Button(killTermuxSessionsCommand); // 램프 켜는 Command 설정
-        button.pressed(); // 램프 켜는 기능 수행
-        button.setCommand(killTermuxTasksCommand); // 다시 램프 켜는 Command로 설정
-        button.pressed(); // 램프 켜는 기능 수행
-        button.setCommand(killPendingPluginExecution); // 다시 램프 켜는 Command로 설정
-        button.pressed(); // 램프 켜는 기능 수행
+        Button button = new Button(killTermuxSessionsCommand); // set killTermuxSessionsCommand
+        button.pressed(); // execute method
+        button.setCommand(killTermuxTasksCommand); // set killTermuxTasksCommand
+        button.pressed(); // execute method
+        button.setCommand(killPendingPluginExecution); // set killPendingPluginExecution
+        button.pressed(); // execute method
 
     }
 
@@ -500,6 +504,53 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
 
     /** Process {@link TERMUX_SERVICE#ACTION_SERVICE_EXECUTE} intent to execute a shell command in
      * a foreground TermuxSession or in a background TermuxTask. */
+    // Implement Facade Pattern on `actionServiceExecute()`
+    public class actionServiceExecuteFacade{
+        private ExecutionCommand executionCommand ;
+        private Intent intent;
+        public actionServiceExecuteFacade(ExecutionCommand executionCommand, Intent intent){
+            this.executionCommand = executionCommand;
+            this.intent = intent;
+        }
+
+        public void getFullPath(){
+            if (executionCommand.executableUri != null) {
+                Logger.logVerbose(LOG_TAG, "uri: \"" + executionCommand.executableUri + "\", path: \"" + executionCommand.executableUri.getPath() + "\", fragment: \"" + executionCommand.executableUri.getFragment() + "\"");
+
+                // Get full path including fragment (anything after last "#")
+                executionCommand.executable = UriUtils.getUriFilePathWithFragment(executionCommand.executableUri);
+                executionCommand.arguments = IntentUtils.getStringArrayExtraIfSet(intent, TERMUX_SERVICE.EXTRA_ARGUMENTS, null);
+                if (Runner.APP_SHELL.equalsRunner(executionCommand.runner))
+                    executionCommand.stdin = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_STDIN, null);
+                executionCommand.backgroundCustomLogLevel = IntentUtils.getIntegerExtraIfSet(intent, TERMUX_SERVICE.EXTRA_BACKGROUND_CUSTOM_LOG_LEVEL, null);
+            }
+        }
+        public void executeService(){
+            executionCommand.workingDirectory = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_WORKDIR, null);
+            executionCommand.isFailsafe = intent.getBooleanExtra(TERMUX_ACTIVITY.EXTRA_FAILSAFE_SESSION, false);
+            executionCommand.sessionAction = intent.getStringExtra(TERMUX_SERVICE.EXTRA_SESSION_ACTION);
+            executionCommand.sessionName = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_SESSION_NAME, null);
+            executionCommand.sessionCreateMode = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_SESSION_CREATE_MODE, null);
+            executionCommand.commandLabel = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_COMMAND_LABEL, "Execution Intent Command");
+            executionCommand.commandDescription = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_COMMAND_DESCRIPTION, null);
+            executionCommand.commandHelp = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_COMMAND_HELP, null);
+            executionCommand.pluginAPIHelp = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_PLUGIN_API_HELP, null);
+            executionCommand.resultConfig.resultPendingIntent = intent.getParcelableExtra(TERMUX_SERVICE.EXTRA_PENDING_INTENT);
+            executionCommand.resultConfig.resultDirectoryPath = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_DIRECTORY, null);
+        }
+        public void getResultConfig(){
+            if (executionCommand.resultConfig.resultDirectoryPath != null) {
+                executionCommand.resultConfig.resultSingleFile = intent.getBooleanExtra(TERMUX_SERVICE.EXTRA_RESULT_SINGLE_FILE, false);
+                executionCommand.resultConfig.resultFileBasename = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_FILE_BASENAME, null);
+                executionCommand.resultConfig.resultFileOutputFormat = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_FILE_OUTPUT_FORMAT, null);
+                executionCommand.resultConfig.resultFileErrorFormat = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_FILE_ERROR_FORMAT, null);
+                executionCommand.resultConfig.resultFilesSuffix = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_FILES_SUFFIX, null);
+            }
+        }
+        public ExecutionCommand getExecutionCommand(){
+            return this.executionCommand;
+        }
+}
     private void actionServiceExecute(Intent intent) {
         if (intent == null) {
             Logger.logError(LOG_TAG, "Ignoring null intent to actionServiceExecute");
@@ -511,6 +562,8 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
         executionCommand.executableUri = intent.getData();
         executionCommand.isPluginExecutionCommand = true;
 
+
+
         // If EXTRA_RUNNER is passed, use that, otherwise check EXTRA_BACKGROUND and default to Runner.TERMINAL_SESSION
         executionCommand.runner = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RUNNER,
             (intent.getBooleanExtra(TERMUX_SERVICE.EXTRA_BACKGROUND, false) ? Runner.APP_SHELL.getName() : Runner.TERMINAL_SESSION.getName()));
@@ -521,35 +574,13 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
             return;
         }
 
-        if (executionCommand.executableUri != null) {
-            Logger.logVerbose(LOG_TAG, "uri: \"" + executionCommand.executableUri + "\", path: \"" + executionCommand.executableUri.getPath() + "\", fragment: \"" + executionCommand.executableUri.getFragment() + "\"");
+        actionServiceExecuteFacade actionServiceExecute = new actionServiceExecuteFacade(executionCommand,intent);
 
-            // Get full path including fragment (anything after last "#")
-            executionCommand.executable = UriUtils.getUriFilePathWithFragment(executionCommand.executableUri);
-            executionCommand.arguments = IntentUtils.getStringArrayExtraIfSet(intent, TERMUX_SERVICE.EXTRA_ARGUMENTS, null);
-            if (Runner.APP_SHELL.equalsRunner(executionCommand.runner))
-                executionCommand.stdin = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_STDIN, null);
-            executionCommand.backgroundCustomLogLevel = IntentUtils.getIntegerExtraIfSet(intent, TERMUX_SERVICE.EXTRA_BACKGROUND_CUSTOM_LOG_LEVEL, null);
-        }
+        actionServiceExecute.getFullPath();
+        actionServiceExecute.executeService();
+        actionServiceExecute.getResultConfig();
 
-        executionCommand.workingDirectory = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_WORKDIR, null);
-        executionCommand.isFailsafe = intent.getBooleanExtra(TERMUX_ACTIVITY.EXTRA_FAILSAFE_SESSION, false);
-        executionCommand.sessionAction = intent.getStringExtra(TERMUX_SERVICE.EXTRA_SESSION_ACTION);
-        executionCommand.sessionName = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_SESSION_NAME, null);
-        executionCommand.sessionCreateMode = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_SESSION_CREATE_MODE, null);
-        executionCommand.commandLabel = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_COMMAND_LABEL, "Execution Intent Command");
-        executionCommand.commandDescription = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_COMMAND_DESCRIPTION, null);
-        executionCommand.commandHelp = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_COMMAND_HELP, null);
-        executionCommand.pluginAPIHelp = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_PLUGIN_API_HELP, null);
-        executionCommand.resultConfig.resultPendingIntent = intent.getParcelableExtra(TERMUX_SERVICE.EXTRA_PENDING_INTENT);
-        executionCommand.resultConfig.resultDirectoryPath = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_DIRECTORY, null);
-        if (executionCommand.resultConfig.resultDirectoryPath != null) {
-            executionCommand.resultConfig.resultSingleFile = intent.getBooleanExtra(TERMUX_SERVICE.EXTRA_RESULT_SINGLE_FILE, false);
-            executionCommand.resultConfig.resultFileBasename = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_FILE_BASENAME, null);
-            executionCommand.resultConfig.resultFileOutputFormat = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_FILE_OUTPUT_FORMAT, null);
-            executionCommand.resultConfig.resultFileErrorFormat = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_FILE_ERROR_FORMAT, null);
-            executionCommand.resultConfig.resultFilesSuffix = IntentUtils.getStringExtraIfSet(intent, TERMUX_SERVICE.EXTRA_RESULT_FILES_SUFFIX, null);
-        }
+        executionCommand = actionServiceExecute.getExecutionCommand();
 
         // Add the execution command to pending plugin execution commands list
         mPendingPluginExecutionCommands.add(executionCommand);
