@@ -8,7 +8,11 @@ import java.util.TimeZone;
 
 public class BasicTimeStamp extends TimeStampUtils{
     @Override
-    SimpleDateFormat logic() {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+    String getDataFormat(){
+        return "yyyy-MM-dd HH:mm:ss z";
+    }
+    @Override
+    TimeZone getTimeZone(){
+        return TimeZone.getTimeZone("UTC");
     }
 }
