@@ -8,7 +8,7 @@ import java.util.TimeZone;
 
 public class MilliSecondUTCTimeStamp extends TimeStampUtils{
     @Override
-    String getDataFromat(){
+    String getDataFormat(){
         return "yyyy-MM-dd HH:mm:ss.SSS z";
     }
     @Override

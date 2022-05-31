@@ -8,7 +8,7 @@ import java.util.TimeZone;
 
 public class BasicTimeStamp extends TimeStampUtils{
     @Override
-    String getDataFromat(){
+    String getDataFormat(){
         return "yyyy-MM-dd HH:mm:ss z";
     }
     @Override

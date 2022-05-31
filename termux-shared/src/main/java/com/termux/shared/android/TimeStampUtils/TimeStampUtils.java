@@ -9,15 +9,12 @@ import java.util.TimeZone;
 public abstract class TimeStampUtils {
     public String getCurrentTimeStamp() {
         @SuppressLint("SimpleDateFormat")
-        String dataFormat = getDataFromat();
+        String dataFormat = getDataFormat();
         TimeZone timeZone = getTimeZone();
         final SimpleDateFormat df = new SimpleDateFormat(dataFormat);
         df.setTimeZone(timeZone);
         return df.format(new Date());
     }
-
-    abstract String getDataFromat() ;
+    abstract String getDataFormat() ;
     abstract TimeZone getTimeZone() ;
-
-
 }

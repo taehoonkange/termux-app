@@ -8,9 +8,7 @@ import java.util.TimeZone;
 
 public class MilliSecondLocalTimeStamp extends TimeStampUtils{
     @Override
-    String getDataFromat(){
-        return "yyyy-MM-dd_HH.mm.ss.SSS";
-    }
+    String getDataFormat(){ return "yyyy-MM-dd_HH.mm.ss.SSS";}
     @Override
     TimeZone getTimeZone(){
         return TimeZone.getDefault();
