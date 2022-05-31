@@ -277,6 +277,7 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
      *
      * We make copies of each list since items are removed inside the loop.
      */
+    // Imply Command Pattern on `killAllTermuxExecutionCommands()`
     public interface Command { void execute();
     }
     public static class Button {
@@ -309,7 +310,8 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
         @Nullable
         @Override
         public IBinder onBind(Intent intent) {
-            return null;
+            Logger.logVerbose(LOG_TAG, "onBind");
+            return mBinder;
         }
 
         @Override
@@ -350,7 +352,8 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
         @Nullable
         @Override
         public IBinder onBind(Intent intent) {
-            return null;
+            Logger.logVerbose(LOG_TAG, "onBind");
+            return mBinder;
         }
 
         @Override
@@ -409,7 +412,7 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
     }
 
 
-    // Need to apply Design Pattern
+
     private synchronized void killAllTermuxExecutionCommands() {
         Logger.logDebug(LOG_TAG, "Killing TermuxSessions=" + mTermuxSessions.size() + ", TermuxTasks=" + mTermuxTasks.size() + ", PendingPluginExecutionCommands=" + mPendingPluginExecutionCommands.size());
 
@@ -420,12 +423,12 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
         PendingPluginExecution pendingPluginExecution = new PendingPluginExecution();
         Command killPendingPluginExecution = new pendingPluginExecutionCommand(pendingPluginExecution);
 
-        Button button = new Button(killTermuxSessionsCommand); // 램프 켜는 Command 설정
-        button.pressed(); // 램프 켜는 기능 수행
-        button.setCommand(killTermuxTasksCommand); // 다시 램프 켜는 Command로 설정
-        button.pressed(); // 램프 켜는 기능 수행
-        button.setCommand(killPendingPluginExecution); // 다시 램프 켜는 Command로 설정
-        button.pressed(); // 램프 켜는 기능 수행
+        Button button = new Button(killTermuxSessionsCommand); // set killTermuxSessionsCommand
+        button.pressed(); // execute method
+        button.setCommand(killTermuxTasksCommand); // set killTermuxTasksCommand
+        button.pressed(); // execute method
+        button.setCommand(killPendingPluginExecution); // set killPendingPluginExecution
+        button.pressed(); // execute method
 
     }
 
