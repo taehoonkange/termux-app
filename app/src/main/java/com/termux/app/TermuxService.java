@@ -391,7 +391,8 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
         @Nullable
         @Override
         public IBinder onBind(Intent intent) {
-            return null;
+            Logger.logVerbose(LOG_TAG, "onBind");
+            return mBinder;
         }
     }
     public class termuxSessionsCommand implements Command {
