@@ -43,6 +43,7 @@ import com.termux.shared.shell.command.ExecutionCommand;
 import com.termux.shared.shell.command.ExecutionCommand.ExecutionCommandBuilder;
 import com.termux.shared.shell.command.ExecutionCommand.Runner;
 import com.termux.shared.shell.command.ExecutionCommand.SessionCreateMode;
+import com.termux.shared.view.ViewUtils;
 import com.termux.terminal.TerminalEmulator;
 import com.termux.terminal.TerminalSession;
 import com.termux.terminal.TerminalSessionClient;
@@ -116,6 +117,11 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
 
     /** If the user has executed the {@link TERMUX_SERVICE#ACTION_STOP_SERVICE} intent. */
     boolean mWantsToStop = false;
+
+    /**
+     * The {@link ShellUtils} is need for implementing SingleTon Pattern
+     */
+    private static ShellUtils shellUtils = ShellUtils.getInstance();
 
     private static final String LOG_TAG = "TermuxService";
 
@@ -698,7 +704,7 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
 
         // Transform executable path to session name, e.g. "/bin/do-something.sh" => "do-something.sh".
         if (executionCommand.sessionName == null && executionCommand.executable != null) {
-            executionCommand.sessionName = ShellUtils.getExecutableBasename(executionCommand.executable);
+            executionCommand.sessionName = shellUtils.getExecutableBasename(executionCommand.executable);
         }
 
         TermuxSession newTermuxSession = null;
