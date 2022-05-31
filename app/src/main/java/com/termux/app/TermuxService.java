@@ -277,47 +277,156 @@ public final class TermuxService extends Service implements AppShell.AppShellCli
      *
      * We make copies of each list since items are removed inside the loop.
      */
-
-    // Need to apply Design Pattern
-    private synchronized void killAllTermuxExecutionCommands() {
-        boolean processResult;
-
-        Logger.logDebug(LOG_TAG, "Killing TermuxSessions=" + mTermuxSessions.size() + ", TermuxTasks=" + mTermuxTasks.size() + ", PendingPluginExecutionCommands=" + mPendingPluginExecutionCommands.size());
-
-        killTerumxSessions();
-        killtermuxTasks();
-        killpendingPluginExecutionCommands();
+    public interface Command { void execute();
     }
+    public static class Button {
+        private Command theCommand;
 
-    private void killpendingPluginExecutionCommands() {
-        List<ExecutionCommand> pendingPluginExecutionCommands = new ArrayList<>(mPendingPluginExecutionCommands);
-        for (int i = 0; i < pendingPluginExecutionCommands.size(); i++) {
-            ExecutionCommand executionCommand = pendingPluginExecutionCommands.get(i);
-            if (!executionCommand.shouldNotProcessResults() && executionCommand.isPluginExecutionCommandWithPendingResult()) {
-                if (executionCommand.setStateFailed(Errno.ERRNO_CANCELLED.getCode(), this.getString(com.termux.shared.R.string.error_execution_cancelled))) {
+        public Button(Command theCommand) {
+            setCommand(theCommand);
+        }
+
+        public void setCommand(Command newCommand) {
+            this.theCommand = newCommand;
+        }
+
+        public void pressed() {
+            theCommand.execute();
+        }
+
+    }
+    public class TermuxSessions extends Service implements TermuxSession.TermuxSessionClient{
+        public void kill(){
+            boolean processResult;
+            List<TermuxSession> termuxSessions = new ArrayList<>(mTermuxSessions);
+            for (int i = 0; i < termuxSessions.size(); i++) {
+                ExecutionCommand executionCommand = termuxSessions.get(i).getExecutionCommand();
+                processResult = mWantsToStop || executionCommand.isPluginExecutionCommandWithPendingResult();
+                termuxSessions.get(i).killIfExecuting(this, processResult);
+            }
+        }
+
+        @Nullable
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
+        }
+
+        @Override
+        public void onTermuxSessionExited(final TermuxSession termuxSession) {
+            boolean isTermuxSession = termuxSession != null;
+            if (isTermuxSession) {
+                ExecutionCommand executionCommand = termuxSession.getExecutionCommand();
+
+                Logger.logVerbose(LOG_TAG, "The onTermuxSessionExited() callback called for \"" + executionCommand.getCommandIdAndLabelLogString() + "\" TermuxSession command");
+
+                // If the execution command was started for a plugin, then process the results
+                boolean isExecutionCommand = executionCommand != null;
+                if (isExecutionCommand && executionCommand.isPluginExecutionCommand)
                     TermuxPluginUtils.processPluginExecutionCommandResult(this, LOG_TAG, executionCommand);
+
+                mTermuxSessions.remove(termuxSession);
+
+                // Notify {@link TermuxSessionsListViewController} that sessions list has been updated if
+                // activity in is foreground
+                boolean isTermuxTerminalSessionClient = mTermuxTerminalSessionClient != null;
+                if (isTermuxTerminalSessionClient)
+                    mTermuxTerminalSessionClient.termuxSessionListNotifyUpdated();
+            }
+
+            updateNotification();
+        }
+    }
+    public class TermuxTasks extends Service implements AppShell.AppShellClient{
+        public void kill(){
+            List<AppShell> termuxTasks = new ArrayList<>(mTermuxTasks);
+            for (int i = 0; i < termuxTasks.size(); i++) {
+                ExecutionCommand executionCommand = termuxTasks.get(i).getExecutionCommand();
+                if (executionCommand.isPluginExecutionCommandWithPendingResult())
+                    termuxTasks.get(i).killIfExecuting(this, true);
+            }
+        }
+
+        @Nullable
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
+        }
+
+        @Override
+        public void onAppShellExited(final AppShell termuxTask) {
+            mHandler.post(() -> {
+                if (termuxTask != null) {
+                    ExecutionCommand executionCommand = termuxTask.getExecutionCommand();
+
+                    Logger.logVerbose(LOG_TAG, "The onTermuxTaskExited() callback called for \"" + executionCommand.getCommandIdAndLabelLogString() + "\" TermuxTask command");
+
+                    // If the execution command was started for a plugin, then process the results
+                    if (executionCommand != null && executionCommand.isPluginExecutionCommand)
+                        TermuxPluginUtils.processPluginExecutionCommandResult(this, LOG_TAG, executionCommand);
+
+                    mTermuxTasks.remove(termuxTask);
+                }
+
+                updateNotification();
+            });
+        }
+    }
+    public class PendingPluginExecution extends Service{
+        public void kill(){
+            List<ExecutionCommand> pendingPluginExecutionCommands = new ArrayList<>(mPendingPluginExecutionCommands);
+            for (int i = 0; i < pendingPluginExecutionCommands.size(); i++) {
+                ExecutionCommand executionCommand = pendingPluginExecutionCommands.get(i);
+                if (!executionCommand.shouldNotProcessResults() && executionCommand.isPluginExecutionCommandWithPendingResult()) {
+                    if (executionCommand.setStateFailed(Errno.ERRNO_CANCELLED.getCode(), this.getString(com.termux.shared.R.string.error_execution_cancelled))) {
+                        TermuxPluginUtils.processPluginExecutionCommandResult(this, LOG_TAG, executionCommand);
+                    }
                 }
             }
         }
-    }
 
-    private void killtermuxTasks() {
-        List<AppShell> termuxTasks = new ArrayList<>(mTermuxTasks);
-        for (int i = 0; i < termuxTasks.size(); i++) {
-            ExecutionCommand executionCommand = termuxTasks.get(i).getExecutionCommand();
-            if (executionCommand.isPluginExecutionCommandWithPendingResult())
-                termuxTasks.get(i).killIfExecuting(this, true);
+        @Nullable
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
         }
     }
+    public class termuxSessionsCommand implements Command {
+        private final TermuxSessions theTermuxSessions;
+        public termuxSessionsCommand(TermuxSessions theTermuxSessions) { this.theTermuxSessions = theTermuxSessions; }
+        public void execute() { theTermuxSessions.kill(); }
+    }
 
-    private void killTerumxSessions() {
-        boolean processResult;
-        List<TermuxSession> termuxSessions = new ArrayList<>(mTermuxSessions);
-        for (int i = 0; i < termuxSessions.size(); i++) {
-            ExecutionCommand executionCommand = termuxSessions.get(i).getExecutionCommand();
-            processResult = mWantsToStop || executionCommand.isPluginExecutionCommandWithPendingResult();
-            termuxSessions.get(i).killIfExecuting(this, processResult);
-        }
+    public class termuxTasksCommand implements Command {
+        private final TermuxTasks theTermuxTasks;
+        public termuxTasksCommand(TermuxTasks theTermuxTasks) { this.theTermuxTasks = theTermuxTasks; }
+        public void execute() { theTermuxTasks.kill(); }
+    }
+    public class pendingPluginExecutionCommand implements Command {
+        private final PendingPluginExecution thePendingPluginExecution;
+        public pendingPluginExecutionCommand(PendingPluginExecution thePendingPluginExecution) { this.thePendingPluginExecution = thePendingPluginExecution; }
+        public void execute() { thePendingPluginExecution.kill(); }
+    }
+
+
+    // Need to apply Design Pattern
+    private synchronized void killAllTermuxExecutionCommands() {
+        Logger.logDebug(LOG_TAG, "Killing TermuxSessions=" + mTermuxSessions.size() + ", TermuxTasks=" + mTermuxTasks.size() + ", PendingPluginExecutionCommands=" + mPendingPluginExecutionCommands.size());
+
+        TermuxSessions termuxSessions = new TermuxSessions();
+        Command killTermuxSessionsCommand = new termuxSessionsCommand(termuxSessions);
+        TermuxTasks termuxTasks = new TermuxTasks();
+        Command killTermuxTasksCommand = new termuxTasksCommand(termuxTasks);
+        PendingPluginExecution pendingPluginExecution = new PendingPluginExecution();
+        Command killPendingPluginExecution = new pendingPluginExecutionCommand(pendingPluginExecution);
+
+        Button button = new Button(killTermuxSessionsCommand); // 램프 켜는 Command 설정
+        button.pressed(); // 램프 켜는 기능 수행
+        button.setCommand(killTermuxTasksCommand); // 다시 램프 켜는 Command로 설정
+        button.pressed(); // 램프 켜는 기능 수행
+        button.setCommand(killPendingPluginExecution); // 다시 램프 켜는 Command로 설정
+        button.pressed(); // 램프 켜는 기능 수행
+
     }
 
 
