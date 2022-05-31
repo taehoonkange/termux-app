@@ -83,9 +83,15 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
      */
     KeyboardUtils keyboardUtils;
 
+    /**
+     * The {@link ShellUtils} is need for implementing SingleTon Pattern
+     */
+    private static ShellUtils shellUtils = ShellUtils.getInstance();
+
     public TermuxTerminalViewClient(TermuxActivity activity, TermuxTerminalSessionClient termuxTerminalSessionClient) {
         this.mActivity = activity;
         this.mTermuxTerminalSessionClient = termuxTerminalSessionClient;
+
         viewUtils = ViewUtils.getInstance();
         keyboardUtils = KeyboardUtils.getInstance();
     }
@@ -690,7 +696,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         TerminalSession session = mActivity.getCurrentSession();
         if (session == null) return;
 
-        String transcriptText = ShellUtils.getTerminalSessionTranscriptText(session, false, true);
+        String transcriptText = shellUtils.getTerminalSessionTranscriptText(session, false, true);
         if (transcriptText == null) return;
 
         // See https://github.com/termux/termux-app/issues/1166.
@@ -725,7 +731,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         TerminalSession session = mActivity.getCurrentSession();
         if (session == null) return null;
 
-        String transcriptText = ShellUtils.getTerminalSessionTranscriptText(session, true, true);
+        String transcriptText = shellUtils.getTerminalSessionTranscriptText(session, true, true);
 
         LinkedHashSet<CharSequence> urlSet = TermuxUrlUtils.extractUrls(transcriptText);
         if (urlSet.isEmpty()) {
@@ -755,7 +761,7 @@ public class TermuxTerminalViewClient extends TermuxTerminalViewClientBase {
         TerminalSession session = mActivity.getCurrentSession();
         if (session == null) return;
 
-        final String transcriptText = ShellUtils.getTerminalSessionTranscriptText(session, false, true);
+        final String transcriptText = shellUtils.getTerminalSessionTranscriptText(session, false, true);
         if (transcriptText == null) return;
 
         MessageDialogUtils.showMessage(mActivity, TermuxConstants.TERMUX_APP_NAME + " Report Issue",

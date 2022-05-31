@@ -39,6 +39,11 @@ import com.termux.shared.termux.TermuxUtils;
 
 public class TermuxPluginUtils {
 
+    /**
+     * The {@link ShellUtils} is need for implementing SingleTon Pattern
+     */
+    private static ShellUtils shellUtils = ShellUtils.getInstance();
+
     private static final String LOG_TAG = "TermuxPluginUtils";
 
     /**
@@ -205,7 +210,7 @@ public class TermuxPluginUtils {
 
         // Set default resultFileBasename if resultSingleFile is true to `<executable_basename>-<timestamp>.log`
         if (resultConfig.resultSingleFile && resultConfig.resultFileBasename == null)
-            resultConfig.resultFileBasename = ShellUtils.getExecutableBasename(executionCommand.executable) + "-" +  new MilliSecondLocalTimeStamp().getCurrentTimeStamp(); //MilliSecondLocalTimeStamp.getCurrentMilliSecondLocalTimeStamp() + ".log";
+            resultConfig.resultFileBasename = shellUtils.getExecutableBasename(executionCommand.executable) + "-" +  new MilliSecondLocalTimeStamp().getCurrentTimeStamp(); //MilliSecondLocalTimeStamp.getCurrentMilliSecondLocalTimeStamp() + ".log";
     }
 
     /**

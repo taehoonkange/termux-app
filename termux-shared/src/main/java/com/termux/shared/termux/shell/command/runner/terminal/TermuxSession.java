@@ -29,6 +29,11 @@ public class TermuxSession {
     private final TermuxSessionClient mTermuxSessionClient;
     private final boolean mSetStdoutOnExit;
 
+    /**
+     * The {@link ShellUtils} is need for implementing SingleTon Pattern
+     */
+    private static ShellUtils shellUtils = ShellUtils.getInstance();
+
     private static final String LOG_TAG = "TermuxSession";
 
     private TermuxSession(@NonNull final TerminalSession terminalSession, @NonNull final ExecutionCommand executionCommand,
@@ -109,7 +114,7 @@ public class TermuxSession {
         String[] processArgs = shellEnvironmentClient.setupProcessArgs(executionCommand.executable, executionCommand.arguments);
 
         executionCommand.executable = processArgs[0];
-        String processName = (isLoginShell ? "-" : "") + ShellUtils.getExecutableBasename(executionCommand.executable);
+        String processName = (isLoginShell ? "-" : "") + shellUtils.getExecutableBasename(executionCommand.executable);
 
         String[] arguments = new String[processArgs.length];
         arguments[0] = processName;
@@ -167,7 +172,7 @@ public class TermuxSession {
         mExecutionCommand.resultData.exitCode = exitCode;
 
         if (this.mSetStdoutOnExit)
-            mExecutionCommand.resultData.stdout.append(ShellUtils.getTerminalSessionTranscriptText(mTerminalSession, true, false));
+            mExecutionCommand.resultData.stdout.append(shellUtils.getTerminalSessionTranscriptText(mTerminalSession, true, false));
 
         if (!mExecutionCommand.setState(ExecutionCommand.ExecutionState.EXECUTED))
             return;
@@ -197,7 +202,7 @@ public class TermuxSession {
 
                 // Get whatever output has been set till now in case its needed
                 if (this.mSetStdoutOnExit)
-                    mExecutionCommand.resultData.stdout.append(ShellUtils.getTerminalSessionTranscriptText(mTerminalSession, true, false));
+                    mExecutionCommand.resultData.stdout.append(shellUtils.getTerminalSessionTranscriptText(mTerminalSession, true, false));
 
                 TermuxSession.processTermuxSessionResult(this, null);
             }

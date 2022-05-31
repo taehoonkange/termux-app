@@ -31,9 +31,15 @@ import java.nio.charset.StandardCharsets;
  */
 public final class AppShell {
 
+
     private final Process mProcess;
     private final ExecutionCommand mExecutionCommand;
     private final AppShellClient mAppShellClient;
+
+    /**
+     * The {@link ShellUtils} is need for implementing SingleTon Pattern
+     */
+    private static ShellUtils shellUtils = ShellUtils.getInstance();
 
     private static final String LOG_TAG = "AppShell";
 
@@ -42,6 +48,7 @@ public final class AppShell {
         this.mProcess = process;
         this.mExecutionCommand = executionCommand;
         this.mAppShellClient = appShellClient;
+
     }
 
     /**
@@ -89,7 +96,7 @@ public final class AppShell {
         Logger.logDebugExtended(LOG_TAG, ExecutionCommand.getExecutionInputLogString(executionCommand,
             true, Logger.shouldEnableLoggingForCustomLogLevel(executionCommand.backgroundCustomLogLevel)));
 
-        String taskName = ShellUtils.getExecutableBasename(executionCommand.executable);
+        String taskName = shellUtils.getExecutableBasename(executionCommand.executable);
 
         if (executionCommand.commandLabel == null)
             executionCommand.commandLabel = taskName;
@@ -138,7 +145,7 @@ public final class AppShell {
      * @param context The {@link Context} for operations.
      */
     private void executeInner(@NonNull final Context context) throws IllegalThreadStateException, InterruptedException {
-        mExecutionCommand.mPid = ShellUtils.getPid(mProcess);
+        mExecutionCommand.mPid = shellUtils.getPid(mProcess);
 
         Logger.logDebug(LOG_TAG, "Running \"" + mExecutionCommand.getCommandIdAndLabelLogString() + "\" AppShell with pid " + mExecutionCommand.mPid);
 
@@ -257,7 +264,7 @@ public final class AppShell {
      * Kill this {@link AppShell} by sending a {@link OsConstants#SIGILL} to its {@link #mProcess}.
      */
     public void kill() {
-        int pid = ShellUtils.getPid(mProcess);
+        int pid = shellUtils.getPid(mProcess);
         try {
             // Send SIGKILL to process
             Os.kill(pid, OsConstants.SIGKILL);
