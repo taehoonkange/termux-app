@@ -50,4 +50,17 @@ public class TermuxUrlUtilsTest extends TestCase {
         assertEquals(result.size(), 2);
     }
 
+    /**
+     * Purpose: Check udp url with more conditions(query)
+     * Input: "Example upd url: udp://192.168.1.100:40000?rtpmap=99;H264/90000"
+     * Expected: ["udp://192.168.1.100:40000?rtpmap=99;H264/90000"]
+     * https://www.leadtools.com/help/sdk/v21/multimedia/filters/udp-source-url-syntax.html
+     */
+    public void testExtractUrlsUDPWithCondition() {
+        String urlWithCondition = "udp://192.168.1.100:40000?rtpmap=99;H264/90000";
+        LinkedHashSet<CharSequence> result = TermuxUrlUtils.extractUrls("Example udp url: " + urlWithCondition);
+        assertTrue(result.contains(urlWithCondition));
+        assertEquals(result.size(), 1);
+    }
+
 }
