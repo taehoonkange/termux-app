@@ -82,4 +82,19 @@ public class MarkdownUtilsTest extends TestCase {
         assertEquals(result1, "**Time**: `" + currentTimeStamp + "`  ");
     }
 
+    /**
+     * Purpose: input plain object
+     * Input: "Time", currentTimeStamp, "-"
+     * Expected: "**Time**:
+     *            ```
+     *            currentTimeStamp
+     *            ```
+     *            "
+     */
+    public void testGetMultiLineMarkdownStringEntry() {
+        String currentTimeStamp = new MilliSecondUTCTimeStamp().getCurrentTimeStamp();
+        String result = MarkdownUtils.getMultiLineMarkdownStringEntry("Time", currentTimeStamp, "-");
+        assertEquals(result, "**Time**:\n```\n" + currentTimeStamp + "\n```\n");
+    }
+
 }
