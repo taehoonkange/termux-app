@@ -37,4 +37,23 @@ public class MarkdownUtilsTest extends TestCase {
         assertEquals(plainTextWithCodeBlockResult, "```\ntest string\n```");
     }
 
+    /**
+     * Purpose: Test text with backticks
+     * Input: "test`with``up```to````5`````backticks"
+     * Expected:
+     *      test`with``up```to````5`````backticks -> ``````test`with``up```to````5`````backticks``````
+     *      `test starts with backticks           -> `` `test starts with backticks``
+     *      `test wrapped with backticks`         -> `` `test wrapped with backticks` ``
+     */
+    public void testGetMarkdownCodeForStringWithBackticks() {
+        String upTo5backtickResult = MarkdownUtils.getMarkdownCodeForString("test`with``up```to````5`````backticks", false);
+        assertEquals(upTo5backtickResult, "``````test`with``up```to````5`````backticks``````"); // should have 6 backticks
+
+        String startsWithBackticksResult = MarkdownUtils.getMarkdownCodeForString("`test starts with backticks", false);
+        assertEquals(startsWithBackticksResult, "`` `test starts with backticks``");
+
+        String wrapWithBackticksResult = MarkdownUtils.getMarkdownCodeForString("`test wrapped with backticks`", false);
+        assertEquals(wrapWithBackticksResult, "`` `test wrapped with backticks` ``");
+    }
+
 }
