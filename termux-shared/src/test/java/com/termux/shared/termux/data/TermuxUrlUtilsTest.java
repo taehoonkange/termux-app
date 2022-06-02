@@ -33,4 +33,21 @@ public class TermuxUrlUtilsTest extends TestCase {
         assertEquals(result.size(), 1);
     }
 
+    /**
+     * Purpose: Check udp url with stream, port number and ip address
+     * Input: "Example udp url1: udp://224.1.1.1:9005
+     *         Example udp url2: udp://224.1.1.1:9005/20.5.1.200"
+     * Expected: ["udp://224.1.1.1:9005", "udp://224.1.1.1:9005/20.5.1.200"]
+     * https://www.leadtools.com/help/sdk/v21/multimedia/filters/udp-source-url-syntax.html
+     */
+    public void testExtractUrlsUDP() {
+        String url1 = "udp://224.1.1.1:9005";
+        String url2 = "udp://224.1.1.1:9005/20.5.1.200";
+        LinkedHashSet<CharSequence> result = TermuxUrlUtils.extractUrls("Example udp url1: " + url1
+            + "\nExample udp url2: " + url2);
+        assertTrue(result.contains(url1));
+        assertTrue(result.contains(url2));
+        assertEquals(result.size(), 2);
+    }
+
 }
