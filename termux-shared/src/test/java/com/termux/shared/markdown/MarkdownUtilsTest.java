@@ -97,4 +97,14 @@ public class MarkdownUtilsTest extends TestCase {
         assertEquals(result, "**Time**:\n```\n" + currentTimeStamp + "\n```\n");
     }
 
+    /**
+     * Purpose: input plain
+     * Input: "Termux", "https://github.com/termux/termux-app"
+     * Expected: [Termux](https://github.com/termux/termux-app)
+     */
+    public void testGetLinkMarkdownString() {
+        String result = MarkdownUtils.getLinkMarkdownString("Termux", "https://github.com/termux/termux-app");
+        assertEquals(result, "[Termux](https://github.com/termux/termux-app)");
+    }
+
 }
