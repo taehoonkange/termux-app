@@ -71,4 +71,15 @@ public class MarkdownUtilsTest extends TestCase {
         assertEquals(nullObjectAndDefinitionResult, "**NullInput**: null  ");
     }
 
+    /**
+     * Purpose: input plain object
+     * Input: "Time", currentTimeStamp
+     * Expected: "**Time**: `{currentTimeStamp}`  "
+     */
+    public void testGetSingleLineMarkdownStringEntry() {
+        String currentTimeStamp = new MilliSecondUTCTimeStamp().getCurrentTimeStamp();
+        String result1 = MarkdownUtils.getSingleLineMarkdownStringEntry("Time", currentTimeStamp, "-");
+        assertEquals(result1, "**Time**: `" + currentTimeStamp + "`  ");
+    }
+
 }
