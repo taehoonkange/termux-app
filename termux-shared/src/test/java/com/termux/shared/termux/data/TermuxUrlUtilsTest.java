@@ -20,4 +20,17 @@ public class TermuxUrlUtilsTest extends TestCase {
         assertEquals(result.size(), 2);
     }
 
+    /**
+     * Purpose: Check url that host is IPv6
+     * Input: "Example IPv6 host: http://[1111:1111:1:2::4]"
+     * Expected: ["http://[1111:1111:1:2::4"]
+     * https://en.wikipedia.org/wiki/URL
+     */
+    public void testExtractUrlsIPv6() {
+        String urlIPv6 = "http://[1111:1111:1:2::4]";
+        LinkedHashSet<CharSequence> result = TermuxUrlUtils.extractUrls("Example IPv6 host: " + urlIPv6);
+        assertTrue(result.contains(urlIPv6));
+        assertEquals(result.size(), 1);
+    }
+
 }
