@@ -56,4 +56,19 @@ public class MarkdownUtilsTest extends TestCase {
         assertEquals(wrapWithBackticksResult, "`` `test wrapped with backticks` ``");
     }
 
+    /**
+     * Purpose: input null object
+     * Input: parameter object is null
+     * Expected:
+     *      "Definition", null, "def" -> "**Definition**: def  "
+     *      "NullInput", null, null   -> "**NullInput**: null  "
+     */
+    public void testGetSingleLineMarkdownStringEntryNull() {
+        String nullObjectResult = MarkdownUtils.getSingleLineMarkdownStringEntry("Definition", null, "def");
+        assertEquals(nullObjectResult, "**Definition**: def  ");
+
+        String nullObjectAndDefinitionResult = MarkdownUtils.getSingleLineMarkdownStringEntry("NullInput", null, null);
+        assertEquals(nullObjectAndDefinitionResult, "**NullInput**: null  ");
+    }
+
 }
