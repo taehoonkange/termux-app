@@ -107,4 +107,19 @@ public class MarkdownUtilsTest extends TestCase {
         assertEquals(result, "[Termux](https://github.com/termux/termux-app)");
     }
 
+    /**
+     * Purpose: Test brackets
+     * Input: label or url with brackets
+     * Expected:
+     *      "[Termux]", "someUrl"          -> [[Termux\]](someUrl)
+     *      "Termux", "https://(some)/url" -> [Termux](https://(s\)o\)m\)e\)/url))
+     */
+    public void testGetLinkMarkdownStringWithLabelBrackets() {
+        String bracketsLabelResult = MarkdownUtils.getLinkMarkdownString("[Termux]", "someUrl");
+        assertEquals(bracketsLabelResult, "[[Termux\\]](someUrl)");
+
+        String parenthesesUrlResult = MarkdownUtils.getLinkMarkdownString("Termux", "https://(s)o)m)e)/url");
+        assertEquals(parenthesesUrlResult, "[Termux](https://(s\\)o\\)m\\)e\\)/url)");
+    }
+
 }
