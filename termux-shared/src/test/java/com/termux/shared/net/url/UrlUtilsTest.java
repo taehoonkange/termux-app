@@ -2,6 +2,8 @@ package com.termux.shared.net.url;
 
 import junit.framework.TestCase;
 
+import java.net.URL;
+
 public class UrlUtilsTest extends TestCase {
     /**
      * Purpose: Check the right form(success)
@@ -44,6 +46,18 @@ public class UrlUtilsTest extends TestCase {
     public void testGetUrlEmptyOrNull() {
         assertNull(UrlUtils.getUrl(""));
         assertNull(UrlUtils.getUrl(null));
+    }
+
+    /**
+     * Purpose: Check the right form(success)
+     * Input: "https://github.com"
+     * Expected: URL("https://github.com")
+     */
+    public void testGetUrl() {
+        String url = "https://github.com";
+        URL result = UrlUtils.getUrl(url);
+        assertNotNull(result);
+        assertEquals(result.toString(), url);
     }
 
 }
