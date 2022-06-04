@@ -36,4 +36,14 @@ public class UrlUtilsTest extends TestCase {
         assertNull(UrlUtils.joinUrl(base, destination, false));
     }
 
+    /**
+     * Purpose: Check the empty or null url string
+     * Input: "", null
+     * Expected: null
+     */
+    public void testGetUrlEmptyOrNull() {
+        assertNull(UrlUtils.getUrl(""));
+        assertNull(UrlUtils.getUrl(null));
+    }
+
 }
