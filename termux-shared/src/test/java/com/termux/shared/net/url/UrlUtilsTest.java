@@ -14,4 +14,15 @@ public class UrlUtilsTest extends TestCase {
         assertEquals(base + "/" + destination, UrlUtils.joinUrl(base, destination, false));
     }
 
+    /**
+     * Purpose: Check the wrong form
+     * Input: base: "github.com", destination: "termux/termux-app"
+     * Expected: null
+     */
+    public void testJoinUrlWrongForm() {
+        String base = "github.com";
+        String destination = "termux/termux-app";
+        assertNull(UrlUtils.joinUrl(base, destination, false));
+    }
+
 }
