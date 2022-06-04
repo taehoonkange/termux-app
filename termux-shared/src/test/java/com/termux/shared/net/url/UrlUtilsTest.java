@@ -150,4 +150,25 @@ public class UrlUtilsTest extends TestCase {
         assertFalse(UrlUtils.areUrlsEqual(null, ""));
     }
 
+    /**
+     * Purpose: Case when same url with different way of expression
+     * Input: ("http://github.com",     "https://github.com")
+     *        ("https://github.com",    "https://github.com/")
+     *        ("github.com",            "https://www.github.com/")
+     * Expected: true
+     */
+    public void testAreUrlsEqual() {
+        String httpUrl = "http://github.com";
+        String httpsUrl = "https://github.com";
+        assertTrue(UrlUtils.areUrlsEqual(httpUrl, httpsUrl));
+
+        String noSlashUrl = "https://github.com";
+        String slashUrl = "https://github.com/";
+        assertTrue(UrlUtils.areUrlsEqual(noSlashUrl, slashUrl));
+
+        String pureUrl = "github.com";
+        String wwwUrl = "https://www.github.com/";
+        assertTrue(UrlUtils.areUrlsEqual(pureUrl, wwwUrl));
+    }
+
 }
