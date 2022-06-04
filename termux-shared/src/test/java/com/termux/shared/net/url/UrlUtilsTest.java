@@ -60,4 +60,44 @@ public class UrlUtilsTest extends TestCase {
         assertEquals(result.toString(), url);
     }
 
+    /**
+     * Purpose: Check URI generic syntax
+     * Input: "https://username:password@host:1234/path1/path2?query1=1&query2=2#fragment"
+     * Expected:
+     *      protocol        https
+     *      user_info       username:password
+     *      host            host
+     *      port            1234
+     *      authority       username:password@host:1234
+     *      path            /path1/path2
+     *      query           query1=1&query2=2
+     *      file            /path1/path2?query1=1&query2=2
+     *      fragment, ref   fragment
+     * https://en.wikipedia.org/wiki/URL
+     */
+    public void testGetUrlPart() {
+        String genericURI = "https://username:password@host:1234/path1/path2?query1=1&query2=2#fragment";
+
+        String protocol = UrlUtils.getUrlPart(genericURI, UrlUtils.UrlPart.PROTOCOL);
+        String user_info = UrlUtils.getUrlPart(genericURI, UrlUtils.UrlPart.USER_INFO);
+        String host = UrlUtils.getUrlPart(genericURI, UrlUtils.UrlPart.HOST);
+        String port = UrlUtils.getUrlPart(genericURI, UrlUtils.UrlPart.PORT);
+        String authority = UrlUtils.getUrlPart(genericURI, UrlUtils.UrlPart.AUTHORITY);
+        String path = UrlUtils.getUrlPart(genericURI, UrlUtils.UrlPart.PATH);
+        String query = UrlUtils.getUrlPart(genericURI, UrlUtils.UrlPart.QUERY);
+        String file = UrlUtils.getUrlPart(genericURI, UrlUtils.UrlPart.FILE);
+        String ref = UrlUtils.getUrlPart(genericURI, UrlUtils.UrlPart.REF);
+        String fragment = UrlUtils.getUrlPart(genericURI, UrlUtils.UrlPart.FRAGMENT);
+
+        assertEquals(protocol, "https");
+        assertEquals(user_info, "username:password");
+        assertEquals(host, "host");
+        assertEquals(port, "1234");
+        assertEquals(user_info + "@" + host + ":" + port, authority);
+        assertEquals(path, "/path1/path2");
+        assertEquals(query, "query1=1&query2=2");
+        assertEquals(path + "?" + query, file);
+        assertEquals(fragment, ref, "fragment");
+    }
+
 }
