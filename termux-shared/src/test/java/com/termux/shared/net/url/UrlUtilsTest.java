@@ -25,4 +25,15 @@ public class UrlUtilsTest extends TestCase {
         assertNull(UrlUtils.joinUrl(base, destination, false));
     }
 
+    /**
+     * Purpose: Check the unknown protocol
+     * Input: base: "unknownProtocol://github.com", destination: "termux/termux-app"
+     * Expected: null
+     */
+    public void testJoinUrlUnknownProtocol() {
+        String base = "unknownProtocol://github.com";
+        String destination = "termux/termux-app";
+        assertNull(UrlUtils.joinUrl(base, destination, false));
+    }
+
 }
