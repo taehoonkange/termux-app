@@ -137,4 +137,17 @@ public class UrlUtilsTest extends TestCase {
         assertNull(fragment, ref);
     }
 
+    /**
+     * Purpose: Case when urls are empty or null
+     * Input: ("", ""), (null, null), (null, "")
+     * Expected:
+     *      ("", ""), (null, null): true
+     *      (null, "")            : false
+     */
+    public void testAreUrlsEqualEmptyOrNull() {
+        assertTrue(UrlUtils.areUrlsEqual("", ""));
+        assertTrue(UrlUtils.areUrlsEqual(null, null));
+        assertFalse(UrlUtils.areUrlsEqual(null, ""));
+    }
+
 }
