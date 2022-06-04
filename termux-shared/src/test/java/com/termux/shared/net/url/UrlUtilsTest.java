@@ -100,4 +100,41 @@ public class UrlUtilsTest extends TestCase {
         assertEquals(fragment, ref, "fragment");
     }
 
+    /**
+     * Purpose: Check the url with some missing parts
+     * Input: "http://[1111:1111:1:2::4]/imgDir/someImg.png"
+     * Expected:
+     *      protocol        http
+     *      user_info       null
+     *      host            [1111:1111:1:2::4]
+     *      port            -1
+     *      authority       [1111:1111:1:2::4]
+     *      path            /imgDir/someImg.png
+     *      query           null
+     *      file            /imgDir/someImg.png
+     *      fragment, ref   null
+     */
+    public void testGetUrlPartMissingParts() {
+        String someUrl = "http://[1111:1111:1:2::4]/imgDir/someImg.png";
+
+        String protocol = UrlUtils.getUrlPart(someUrl, UrlUtils.UrlPart.PROTOCOL);
+        String user_info = UrlUtils.getUrlPart(someUrl, UrlUtils.UrlPart.USER_INFO);
+        String host = UrlUtils.getUrlPart(someUrl, UrlUtils.UrlPart.HOST);
+        String port = UrlUtils.getUrlPart(someUrl, UrlUtils.UrlPart.PORT);
+        String authority = UrlUtils.getUrlPart(someUrl, UrlUtils.UrlPart.AUTHORITY);
+        String path = UrlUtils.getUrlPart(someUrl, UrlUtils.UrlPart.PATH);
+        String query = UrlUtils.getUrlPart(someUrl, UrlUtils.UrlPart.QUERY);
+        String file = UrlUtils.getUrlPart(someUrl, UrlUtils.UrlPart.FILE);
+        String ref = UrlUtils.getUrlPart(someUrl, UrlUtils.UrlPart.REF);
+        String fragment = UrlUtils.getUrlPart(someUrl, UrlUtils.UrlPart.FRAGMENT);
+
+        assertEquals(protocol, "http");
+        assertNull(user_info);
+        assertEquals(host, authority, "[1111:1111:1:2::4]");
+        assertEquals(port, "-1");
+        assertEquals(path, file, "/imgDir/someImg.png");
+        assertNull(query);
+        assertNull(fragment, ref);
+    }
+
 }
