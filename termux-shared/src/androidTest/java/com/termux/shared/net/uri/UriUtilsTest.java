@@ -27,4 +27,16 @@ public class UriUtilsTest {
         assertNull(UriUtils.getUriFilePathWithFragment(nullPathUri));
     }
 
+    /**
+     * Purpose: Check the each Uri made by {@link Uri#parse(String)} and {@link UriUtils#getFileUri(String)}
+     * Input: Uri.parse("file:///path1/path2#fragment"), UriUtils.getFileUri("/path1/path2#fragment")
+     * Expected: "/path1/path2#fragment"
+     */
+    @Test
+    public void testGetUriFilePath() {
+        Uri uriWithParse = Uri.parse("file:///path1/path2#fragment");
+        Uri uriWithBuilder = UriUtils.getFileUri("/path1/path2#fragment");
+        assertEquals("/path1/path2#fragment", UriUtils.getUriFilePathWithFragment(uriWithParse), UriUtils.getUriFilePathWithFragment(uriWithBuilder));
+    }
+
 }
