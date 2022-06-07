@@ -78,4 +78,17 @@ public class LoggerTest extends TestCase {
         String expected = message + ":\n" + Logger.getStackTraceString(throwable);
         assertEquals(result, expected);
     }
+
+    /**
+     * Purpose: Check when object is null
+     * Input: Logger.getSingleLineLogStringEntry (null, null, null), ("label", null, "-")
+     * Expected:
+     *      (null, null, null) = ": "
+     *      ("label", null, "-") = "label: -"
+     */
+    @Test
+    public void testGetSingleLineLogStringEntryForNullObject() {
+        String result = Logger.
+        assertEquals(result, message);
+    }
 }
