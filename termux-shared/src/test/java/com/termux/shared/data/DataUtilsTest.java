@@ -9,7 +9,7 @@ public class DataUtilsTest {
     public void setUp() {
     }
 
-    /*
+    /**
     * Purpose : Check input text is Null
     * Input : getTruncatedCommandOutput (text: null)
     * Expected :
@@ -20,7 +20,7 @@ public class DataUtilsTest {
         assertNull(DataUtils.getTruncatedCommandOutput(null, DataUtils.TRANSACTION_SIZE_LIMIT_IN_BYTES, true, false, true ));
     }
 
-    /*
+    /**
      * Purpose : Check result when truncated function with prefix = "(truncated) "
      * Check Target : getTruncatedCommandOutput
      * Expected :
@@ -43,7 +43,7 @@ public class DataUtilsTest {
         assertEquals(expected, DataUtils.getTruncatedCommandOutput(test, maxSize2, false, false, true));
     }
 
-    /*
+    /**
      * Purpose : Check result when truncated function without prefix"
      * Check Target : getTruncatedCommandOutput
      * Expected :
@@ -70,7 +70,7 @@ public class DataUtilsTest {
         assertEquals(expected, DataUtils.getTruncatedCommandOutput(test, maxSize1, false, false, false));
     }
 
-    /*
+    /**
      * Purpose : Check result when command has NewLine
      * Check Target : getTruncatedCommandOutput
      * Expected :
@@ -90,7 +90,7 @@ public class DataUtilsTest {
         assertEquals(expected, DataUtils.getTruncatedCommandOutput(test, maxSize, false, true, false));
     }
 
-    /*
+    /**
      * Purpose : Check array changed when array is null of length is zero
      * Check Target : replaceSubStringsInStringArrayItems
      * Expected :
@@ -110,7 +110,7 @@ public class DataUtilsTest {
     }
 
 
-    /*
+    /**
      * Purpose : Check function of replaceSubStringsInStringArrayItems
      * Check Target : replaceSubStringsInStringArrayItems
      * Expected :
@@ -144,7 +144,7 @@ public class DataUtilsTest {
         }
     }
 
-    /*
+    /**
      * Purpose : Check returning original float value when string value is null
      * Check Target : getFloatFromString
      * Expected :
@@ -158,7 +158,7 @@ public class DataUtilsTest {
         assertEquals(def, DataUtils.getFloatFromString(value, def), 0.00001);
     }
 
-    /*
+    /**
      * Purpose : Check returning casting float value from string value
      * Check Target : getFloatFromString
      * Expected :
@@ -173,7 +173,7 @@ public class DataUtilsTest {
         assertEquals(expected, DataUtils.getFloatFromString(value, test), 0.00001);
     }
 
-    /*
+    /**
      * Purpose : Check returning original int value when string value is null
      * Check Target : getIntFromString
      * Expected :
@@ -187,7 +187,7 @@ public class DataUtilsTest {
         assertEquals(def, DataUtils.getIntFromString(value, def));
     }
 
-    /*
+    /**
      * Purpose : Check returning casting int value from string value
      * Check Target : getIntFromString
      * Expected :
@@ -202,7 +202,7 @@ public class DataUtilsTest {
         assertEquals(expected, DataUtils.getIntFromString(value, def));
     }
 
-    /*
+    /**
      * Purpose : Check returning original string value from Integer value when string is null
      * Check Target : getStringFromInteger
      * Expected :
@@ -216,7 +216,7 @@ public class DataUtilsTest {
         assertEquals(def, DataUtils.getStringFromInteger(value, def));
     }
 
-    /*
+    /**
      * Purpose : Check returning casting string value from Integer value
      * Check Target : getStringFromInteger
      * Expected :
@@ -231,7 +231,7 @@ public class DataUtilsTest {
         assertEquals(expected, DataUtils.getStringFromInteger(value, def));
     }
 
-    /*
+    /**
      * Purpose : Check casting Hex String from byte array
      * Check Target : bytesToHex
      * Expected :
@@ -245,7 +245,7 @@ public class DataUtilsTest {
         assertEquals(expected, DataUtils.bytesToHex(bytes));
     }
 
-    /*
+    /**
      * Purpose : Check clamp function
      * Check Target : clamp
      * Expected :
@@ -263,7 +263,7 @@ public class DataUtilsTest {
         assertEquals(100, DataUtils.clamp(1123, min, max));
     }
 
-    /*
+    /**
      * Purpose : Check rangedOrDefault function
      * Check Target : rangedOrDefault
      * Expected :
@@ -282,7 +282,7 @@ public class DataUtilsTest {
         assertEquals(def, DataUtils.rangedOrDefault(1024.24F, def, min, max), 0.00001);
     }
 
-    /*
+    /**
      * Purpose : Check null at Indent Adding function if input string is null
      * Check Target : getSpaceIndentedString, getTabIndentedString, getIndentedString
      * Expected :
@@ -297,7 +297,7 @@ public class DataUtilsTest {
         assertNull(DataUtils.getIndentedString(null, " ", 5));
     }
 
-    /*
+    /**
      * Purpose : Check adding space indent
      * Check Target : getSpaceIndentedString
      * Expected :
@@ -311,7 +311,7 @@ public class DataUtilsTest {
         assertEquals(expected, DataUtils.getSpaceIndentedString(value, 3));
     }
 
-    /*
+    /**
      * Purpose : Check adding tab indent
      * Check Target : getSpaceIndentedString
      * Expected :
