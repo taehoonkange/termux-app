@@ -64,6 +64,21 @@ public class FileUtilsTest extends TestCase {
     public void testnormalizePathforNull(){
         assertNull(FileUtils.normalizePath(null));
     }
+    /**
+     * Purpose: Test path text
+     * Input: normalizePath(////+path), getCanonicalPath("\a/path"), , getCanonicalPath("///////+$path/)
+     * Expected:
+     *      normalizePath(////+path) -> "/+path"
+     *      getCanonicalPath("\a/path") -> "\\a/path"
+     *      getCanonicalPath("///////+$path/) -> "/+$path"
+     */
+
+    public void testnormalizePath(){
+        assertEquals(FileUtils.normalizePath("////+path"), "/+path");
+        assertEquals(FileUtils.normalizePath("\\a/path"), "\\a/path");
+        assertEquals(FileUtils.normalizePath("///////+$path/"), "/+$path");
+    }
+
 
 
 }
