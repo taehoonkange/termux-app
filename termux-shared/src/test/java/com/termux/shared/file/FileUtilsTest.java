@@ -79,6 +79,31 @@ public class FileUtilsTest extends TestCase {
         assertEquals(FileUtils.normalizePath("///////+$path/"), "/+$path");
     }
 
+    /**
+     * Purpose:  Check string path is null or ""
+     * Input: sanitizeFileName(null, true ,true), sanitizeFileName(null, false ,false), sanitizeFileName(null, false ,true), sanitizeFileName(null, true ,false)
+     *        sanitizeFileName("", true ,true), sanitizeFileName("", false ,false), sanitizeFileName("", false ,true), sanitizeFileName("", true ,false)
+     * Expected:
+     *      sanitizeFileName(null, true ,true) -> null
+     *      sanitizeFileName(null, false ,false) -> null
+     *      sanitizeFileName(null, false ,true) -> null
+     *      sanitizeFileName(null, true ,false) -> null
+     *      sanitizeFileName("", true ,true) -> ""
+     *      sanitizeFileName("", false ,false) -> ""
+     *      sanitizeFileName("", false ,true) -> ""
+     *      sanitizeFileName("", true ,false) -> ""
+     */
+    public void testsanitizeFileNameforNull(){
+        assertEquals(FileUtils.sanitizeFileName(null, true, false), null);
+        assertEquals(FileUtils.sanitizeFileName(null, false, true), null);
+        assertEquals(FileUtils.sanitizeFileName(null, false, false), null);
+        assertEquals(FileUtils.sanitizeFileName(null, true, true), null);
+        assertEquals(FileUtils.sanitizeFileName("", true, false), "");
+        assertEquals(FileUtils.sanitizeFileName("", false, true), "");
+        assertEquals(FileUtils.sanitizeFileName("", false, false), "");
+        assertEquals(FileUtils.sanitizeFileName("", true, true), "");
+
+    }
 
 
 }
