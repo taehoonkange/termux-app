@@ -40,7 +40,7 @@ public class FileUtilsTest extends TestCase {
 
     }
     /**
-     * Purpose: Check when string is non-absolute Path
+     * Purpose: Check string is non-absolute Path
      * Input: getCanonicalPath("/path", null), getCanonicalPath("/path", "prefixForNonAbsolutePath")
      * Expected:
      *      getCanonicalPath("path", null)-> "/path"
@@ -52,6 +52,17 @@ public class FileUtilsTest extends TestCase {
        assertEquals(FileUtils.getCanonicalPath("path","prefixForNonAbsolute"), new File("prefixForNonAbsolute/path").getAbsolutePath());
        assertEquals(FileUtils.getCanonicalPath("path",null), "/path");
 
+    }
+    /**
+     * Purpose: Check string path is null or ""
+     * Input: normalizePath(null), getCanonicalPath("")
+     * Expected:
+     *      normalizePath(null) -> null
+     *      getCanonicalPath("")   -> ""
+     */
+
+    public void testnormalizePathforNull(){
+        assertNull(FileUtils.normalizePath(null));
     }
 
 
