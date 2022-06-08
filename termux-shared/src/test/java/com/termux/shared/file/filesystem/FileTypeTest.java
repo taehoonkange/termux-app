@@ -15,4 +15,17 @@ public class FileTypeTest extends TestCase {
         assertEquals(FileType.REGULAR.getName(), "regular");
 
     }
+    /**
+     * Purpose: Check get value
+     * Input: base: FileType.NO_EXIST.getValue(), FileType.REGULAR.getValue()
+     * Expected:
+     *      FileType.NO_EXIST.getValue() -> 0
+     *      FileType.REGULAR.getValue() -> 1
+     */
+    public void testgetValue(){
+        assertEquals(FileType.NO_EXIST.getValue(), 0);
+        assertEquals(FileType.REGULAR.getValue(), 1);
+
+    }
+
 }
