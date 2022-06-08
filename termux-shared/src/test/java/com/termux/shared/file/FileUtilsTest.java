@@ -66,17 +66,17 @@ public class FileUtilsTest extends TestCase {
     }
     /**
      * Purpose: Test path text
-     * Input: normalizePath(////+path), getCanonicalPath("\a/path"), , getCanonicalPath("///////+$path/)
+     * Input: normalizePath("////path"), getCanonicalPath("\./path"), , getCanonicalPath("///////$path/")
      * Expected:
-     *      normalizePath(////+path) -> "/+path"
-     *      getCanonicalPath("\a/path") -> "\\a/path"
-     *      getCanonicalPath("///////+$path/) -> "/+$path"
+     *      normalizePath("////path") -> "/path"
+     *      getCanonicalPath("\./path") -> "\path"
+     *      getCanonicalPath("///////$path/") -> "/$path"
      */
 
     public void testnormalizePath(){
-        assertEquals(FileUtils.normalizePath("////+path"), "/+path");
         assertEquals(FileUtils.normalizePath("\\a/path"), "\\a/path");
         assertEquals(FileUtils.normalizePath("///////+$path/"), "/+$path");
+        assertEquals(FileUtils.normalizePath("///////$path/"), "/$path");
     }
 
     /**
@@ -102,6 +102,10 @@ public class FileUtilsTest extends TestCase {
         assertEquals(FileUtils.sanitizeFileName("", false, true), "");
         assertEquals(FileUtils.sanitizeFileName("", false, false), "");
         assertEquals(FileUtils.sanitizeFileName("", true, true), "");
+
+    }
+
+    public void testsanitizeFileName(){
 
     }
 
