@@ -105,8 +105,18 @@ public class FileUtilsTest extends TestCase {
 
     }
 
+    /**
+     * Purpose:  Convert special characters and whitespaces to "_" and uppercase to lowercase
+     * Input: sanitizeFileName("\\/:*?\"<>|path", false, false), sanitizeFileName("\n\tpath", true, false), sanitizeFileName("PATH", true, true)
+     * Expected:
+     *      sanitizeFileName("\\/:*?\"<>|path", false, false) -> "_________path"
+     *      sanitizeFileName("\n\tpath", true, false) -> "__path"
+     *      sanitizeFileName("PATH", true, true) -> "path"
+     */
     public void testsanitizeFileName(){
-
+        assertEquals(FileUtils.sanitizeFileName("\\/:*?\"<>|path", false, false), "_________path");
+        assertEquals(FileUtils.sanitizeFileName("\n\tpath", true, false), "__path");
+        assertEquals(FileUtils.sanitizeFileName("PATH", true, true), "path");
     }
 
 
