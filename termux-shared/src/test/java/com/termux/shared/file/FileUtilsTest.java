@@ -74,8 +74,8 @@ public class FileUtilsTest extends TestCase {
      */
 
     public void testnormalizePath(){
-        assertEquals(FileUtils.normalizePath("\\a/path"), "\\a/path");
-        assertEquals(FileUtils.normalizePath("///////+$path/"), "/+$path");
+        assertEquals(FileUtils.normalizePath("////path"), "/path");
+        assertEquals(FileUtils.normalizePath("\\./path"), "\\path");
         assertEquals(FileUtils.normalizePath("///////$path/"), "/$path");
     }
 
