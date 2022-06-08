@@ -4,6 +4,10 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class LoggerTest extends TestCase {
 
     /**
@@ -80,15 +84,53 @@ public class LoggerTest extends TestCase {
     }
 
     /**
+     * Purpose: Check when string is given
+     * Input: Logger.getMessageAndStackTracesString ("message", null), ("message", List<Throwable>)
+     * Expected:
+     *      ("message" null) = "message"
+     *      ("message", List<Throwable>) = "message" + ":\n" + Logger.getStackTracesString(null, Logger.getStackTracesStringArray(throwableList))
+     */
+    @Test
+    public void testGetMessageAndStackTracesStringForString() {
+        List<Throwable> throwableList = new ArrayList<Throwable>(Arrays.asList(new Throwable()));
+
+        String result = Logger.getMessageAndStackTracesString("message", null);
+        assertEquals(result, "message");
+
+        result = Logger.getMessageAndStackTracesString("message", throwableList);
+        String expected = "message" + ":\n" + Logger.getStackTracesString(null, Logger.getStackTracesStringArray(throwableList));
+        assertEquals(result, expected);
+    }
+
+    /**
      * Purpose: Check when object is null
      * Input: Logger.getSingleLineLogStringEntry (null, null, null), ("label", null, "-")
      * Expected:
-     *      (null, null, null) = ": "
+     *      (null, null, null) = "null: null"
      *      ("label", null, "-") = "label: -"
      */
     @Test
     public void testGetSingleLineLogStringEntryForNullObject() {
-        String result = Logger.
-        assertEquals(result, message);
+        String result = Logger.getSingleLineLogStringEntry(null, null, null);
+        assertEquals(result, "null: null");
+
+        result = Logger.getSingleLineLogStringEntry("label", null, "-");
+        assertEquals(result, "label: -");
+    }
+
+    /**
+     * Purpose: Check when object is null
+     * Input: Logger.getSingleLineLogStringEntry (null, "message", null), ("label", "message", "-")
+     * Expected:
+     *      (null, null, null) = "null: `message`null"
+     *      ("label", null, "-") = "label: `message`-"
+     */
+    @Test
+    public void testGetSingleLineLogStringEntryForObject() {
+        String result = Logger.getSingleLineLogStringEntry(null, "message", null);
+        assertEquals(result, "null: `message`");
+
+        result = Logger.getSingleLineLogStringEntry("label", "message", "-");
+        assertEquals(result, "label: `message`");
     }
 }
